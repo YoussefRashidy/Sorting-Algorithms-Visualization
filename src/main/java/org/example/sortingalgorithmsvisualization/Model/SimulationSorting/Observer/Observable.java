@@ -1,0 +1,10 @@
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+
+public interface Observable {
+    public void register(Observer observer) ;
+    public void unRegister(Observer observer) ;
+    public void swapNotification(int index1 , int index2) ;
+    public void comparisonNotification(int index1 , int index2) ;
+    public void divideNotification(int index) ;
+    public void setNotification(int index , int val) ;
+}
