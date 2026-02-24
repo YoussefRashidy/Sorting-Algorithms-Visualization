@@ -5,4 +5,6 @@ module org.example.sortingalgorithmsvisualization {
 
     opens org.example.sortingalgorithmsvisualization to javafx.fxml;
     exports org.example.sortingalgorithmsvisualization;
+    exports org.example.sortingalgorithmsvisualization.View;
+
 }
