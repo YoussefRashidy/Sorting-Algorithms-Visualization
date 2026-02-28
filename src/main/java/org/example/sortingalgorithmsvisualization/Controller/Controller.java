@@ -1,4 +1,4 @@
 package org.example.sortingalgorithmsvisualization.Controller;
 
-public class SimulationManager {
+public class Controller {
 }
