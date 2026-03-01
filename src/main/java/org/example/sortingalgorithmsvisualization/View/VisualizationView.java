@@ -17,14 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VisualizationView extends Scene {
-    private double[] normalizedNums ;
-    private Rectangle[] bars ;
-    private int gap = 4 ;
-    private int padding = 20 ;
-    private static final Color BAR_COLOR   = Color.web("#38bdf8");// soft cyan
-    private static final Color comparisonColor = Color.RED ;
-    private static final Color swapColor = Color.YELLOW ;
-    private int animationDuration = 200 ;
+    private double[] normalizedNums;
+    private Rectangle[] bars;
+    private int gap = 4;
+    private int padding = 20;
+    private static final Color BAR_COLOR = Color.web("#38bdf8");// soft cyan
+    private static final Color comparisonColor = Color.RED;
+    private static final Color swapColor = Color.YELLOW;
+    private int animationDuration = 200;
 
 
     public VisualizationView(Parent parent) {
@@ -57,33 +57,33 @@ public class VisualizationView extends Scene {
     }
 
     public void setNormalizedNums(int[] nums) {
-        int max = Arrays.stream(nums).max().getAsInt() ;
+        int max = Arrays.stream(nums).max().getAsInt();
 
         this.normalizedNums = Arrays.stream(nums.clone()).
-                mapToDouble(p -> (double) p/max)
-                .toArray() ;
+                mapToDouble(p -> (double) p / max)
+                .toArray();
     }
 
     public void initializeBars() {
-        Pane root = new Pane() ;
-        bars = new Rectangle[normalizedNums.length] ;
+        Pane root = new Pane();
+        bars = new Rectangle[normalizedNums.length];
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        double height = bounds.getHeight() ;
-        double width = bounds.getWidth() ;
-        double barWidth = (width/normalizedNums.length) - gap ;
-        double heightFactor = height - 2*padding ;
-        for (int i = 0 ; i < normalizedNums.length ; i++) {
-            double barHeight = normalizedNums[i] * heightFactor ;
-            Rectangle bar = new Rectangle() ;
-            bar.setX(i*(barWidth+gap)+ gap/2.0);
+        double height = bounds.getHeight();
+        double width = bounds.getWidth();
+        double barWidth = (width / normalizedNums.length) - gap;
+        double heightFactor = height - 2 * padding;
+        for (int i = 0; i < normalizedNums.length; i++) {
+            double barHeight = normalizedNums[i] * heightFactor;
+            Rectangle bar = new Rectangle();
+            bar.setX(i * (barWidth + gap) + gap / 2.0);
             bar.setWidth(barWidth);
-            bar.setY(height-barHeight-padding);
+            bar.setY(height - barHeight - padding);
             bar.setHeight(barHeight);
             bar.setArcWidth(12);
             bar.setArcHeight(12);
             bar.setFill(BAR_COLOR);
-            root.getChildren().add(bar) ;
-            bars[i] = bar ;
+            root.getChildren().add(bar);
+            bars[i] = bar;
         }
         this.setRoot(root);
     }
@@ -106,6 +106,7 @@ public class VisualizationView extends Scene {
 
         return tl1;
     }
+
     public Timeline onInterchange(SwapEvent event) {
         int index1 = event.index1();
         int index2 = event.index2();
@@ -150,7 +151,6 @@ public class VisualizationView extends Scene {
         tl.setOnFinished(e -> bars[index].setFill(BAR_COLOR));
         return tl;
     }
-
     /**
      * Plays a list of SortingEvents sequentially with proper animation timing.
      */

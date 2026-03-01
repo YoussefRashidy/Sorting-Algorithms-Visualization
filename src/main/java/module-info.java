@@ -10,5 +10,6 @@ module org.example.sortingalgorithmsvisualization {
     exports org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
     exports org.example.sortingalgorithmsvisualization.Model.PureSorting;
     exports org.example.sortingalgorithmsvisualization.Controller;
+    exports org.example.sortingalgorithmsvisualization.Model;
 
 }

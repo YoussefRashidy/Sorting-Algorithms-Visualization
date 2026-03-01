@@ -1,0 +1,192 @@
+/* ============================================================
+   main-scene.css — Styles for the animated-background scene
+   ============================================================ */
+
+/* ── root / global ──────────────────────────────────────────── */
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size:   13px;
+}
+
+/* ── scrollpane wrapper (invisible chrome) ──────────────────── */
+.form-scroll {
+    -fx-background-color: transparent;
+    -fx-background:       transparent;
+}
+.form-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ── glass-effect form pane ─────────────────────────────────── */
+.input-form-pane {
+    -fx-background-color: rgba(20, 20, 40, 0.78);
+    -fx-background-radius: 16;
+    -fx-border-color:  rgba(255, 255, 255, 0.10);
+    -fx-border-width:  1;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 30, 0.1, 0, 6);
+}
+
+/* ── form title / subtitle ──────────────────────────────────── */
+.form-title {
+    -fx-font-size:   22px;
+    -fx-font-weight: bold;
+    -fx-text-fill:   #e0e0ff;
+}
+.form-subtitle {
+    -fx-font-size:  13px;
+    -fx-text-fill:  rgba(200, 200, 230, 0.70);
+}
+
+/* ── section headings ───────────────────────────────────────── */
+.section-label {
+    -fx-font-size:   14px;
+    -fx-font-weight: bold;
+    -fx-text-fill:   #b0c4ff;
+}
+
+.label-small {
+    -fx-text-fill: #ccccdd;
+    -fx-font-size: 12px;
+}
+
+/* ── separators ─────────────────────────────────────────────── */
+.separator .line {
+    -fx-border-color: rgba(255, 255, 255, 0.08);
+    -fx-border-width: 0 0 1 0;
+}
+
+/* ── text fields ────────────────────────────────────────────── */
+.text-field {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 6;
+    -fx-border-color:  rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 6;
+    -fx-text-fill:  #e0e0e0;
+    -fx-prompt-text-fill: rgba(180, 180, 200, 0.50);
+    -fx-padding: 6 10;
+}
+.text-field:focused {
+    -fx-border-color: rgba(100, 140, 255, 0.60);
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ── combo box ──────────────────────────────────────────────── */
+.combo-box {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 6;
+    -fx-border-color:  rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 6;
+    -fx-padding: 4 8;
+}
+.combo-box .list-cell {
+    -fx-text-fill: #d0d0e0;
+    -fx-background-color: transparent;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: rgba(30, 30, 55, 0.95);
+}
+.combo-box-popup .list-cell {
+    -fx-text-fill: #d0d0e0;
+    -fx-background-color: transparent;
+}
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: rgba(80, 120, 255, 0.30);
+}
+
+/* ── radio buttons & checkboxes ─────────────────────────────── */
+.radio-button,
+.check-box {
+    -fx-text-fill: #c8c8e0;
+}
+.radio-button .radio,
+.check-box .box {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-border-color:  rgba(255, 255, 255, 0.25);
+}
+.radio-button:selected .radio .dot {
+    -fx-background-color: #6a9cff;
+}
+.check-box:selected .box .mark {
+    -fx-background-color: #6a9cff;
+}
+
+/* ── file label ─────────────────────────────────────────────── */
+.file-label {
+    -fx-text-fill: rgba(180, 180, 200, 0.60);
+    -fx-font-style: italic;
+    -fx-font-size: 12px;
+}
+
+/* ── slider ─────────────────────────────────────────────────── */
+.slider .track {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 4;
+}
+.slider .thumb {
+    -fx-background-color: #6a9cff;
+    -fx-background-radius: 10;
+}
+.slider .axis .tick-mark {
+    -fx-stroke: rgba(255, 255, 255, 0.20);
+}
+.slider .axis .tick-label {
+    -fx-text-fill: rgba(200, 200, 220, 0.55);
+    -fx-font-size: 10px;
+}
+
+/* ── buttons ────────────────────────────────────────────────── */
+.button {
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8 20;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-start {
+    -fx-background-color: linear-gradient(to right, #4a7cff, #6a5aff);
+}
+.btn-start:hover {
+    -fx-background-color: linear-gradient(to right, #5d8fff, #816eff);
+}
+.btn-start:pressed {
+    -fx-background-color: #3a5cbf;
+}
+
+.btn-reset {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-border-color:  rgba(255, 255, 255, 0.20);
+}
+.btn-reset:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+}
+.btn-reset:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ── choose-file button ─────────────────────────────────────── */
+.button:default {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-border-color:  rgba(255, 255, 255, 0.20);
+}
+
+/* ── scrollbar overrides (keep dark) ────────────────────────── */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+.scroll-bar .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 4;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}

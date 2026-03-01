@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -36,6 +37,9 @@ public class MainGUI extends Application {
     private static final Color CARD_BG     = Color.web("#1e293b");
     private static final Color CARD_HOVER  = Color.web("#334155");
 
+    // Cache scenes for later use
+    InputScene inputScene = new InputScene("Visualization") ;
+
     @Override
     public void start(Stage stage) throws Exception {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
@@ -45,6 +49,7 @@ public class MainGUI extends Application {
         root.getChildren().addAll(bars, box);
         root.setBackground(new Background(new BackgroundFill(BG_TOP,null,null)));
         Scene scene = new Scene(root, Color.web("#121212"));
+        scene.getStylesheets().add(getClass().getResource("/main-scene.css").toExternalForm()) ;
         stage.setScene(scene);
         stage.setWidth(bounds.getWidth());
         stage.setHeight(bounds.getHeight());
@@ -219,8 +224,58 @@ public class MainGUI extends Application {
             st.play();
         });
 
+        card.setOnMousePressed(e -> {
+            Stage primaryStage = (Stage) card.getScene().getWindow();
+
+            // Fade out current scene
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(400), card.getScene().getRoot());
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+            fadeOut.setOnFinished(event -> {
+                Parent root = inputScene.getRoot() ;
+                inputScene.setRoot(new Pane());
+                primaryStage.getScene().setRoot(root);
+                // Fade in new scene
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), inputScene.getRoot());
+                fadeIn.setFromValue(0.0);
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+            });
+            fadeOut.play();
+        });
+
 
         return card;
+    }
+    private void transitionToScene(Stage stage, Scene nextScene) {
+        Parent currentRoot = stage.getScene().getRoot();
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), currentRoot);
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(300), currentRoot);
+
+        fadeOut.setToValue(0.0);
+        scaleOut.setToX(0.95);
+        scaleOut.setToY(0.95);
+
+        ParallelTransition exit = new ParallelTransition(fadeOut, scaleOut);
+        exit.setOnFinished(e -> {
+            stage.setScene(nextScene);
+            stage.setFullScreen(true);
+
+            Parent nextRoot = nextScene.getRoot();
+            nextRoot.setOpacity(0);
+            nextRoot.setScaleX(0.95);
+            nextRoot.setScaleY(0.95);
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(300), nextRoot);
+            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(300), nextRoot);
+            fadeIn.setToValue(1.0);
+            scaleIn.setToX(1.0);
+            scaleIn.setToY(1.0);
+
+            new ParallelTransition(fadeIn, scaleIn).play();
+        });
+        exit.play();
     }
 
 
