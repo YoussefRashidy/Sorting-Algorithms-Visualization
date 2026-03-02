@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.Observers;
 
 public interface Observer {
     public void swap(int index1 , int index2) ;

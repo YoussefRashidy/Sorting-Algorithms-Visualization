@@ -79,4 +79,20 @@ public class ArrayGenerator {
         }
         return arrays ;
     }
+
+    public ArrayList<int[]> generateBatch(ArrayList<Integer> sizes , ArrayType[] modes , int max) {
+        ArrayList<int[]> arrays = new ArrayList<>() ;
+        for (int size : sizes) {
+            for (ArrayType mode : modes) {
+                arrays.add(switch (mode){
+                    case RANDOM -> randomArray(size, max) ;
+                    case SORTED -> sortedArray(size,max) ;
+                    case INVERSELY_SORTED -> inverselySortedArray(size, max) ;
+                    case NEARLY_SORTED -> nearlySortedArray(size,max) ;
+                    default -> throw new IllegalArgumentException("Unsupported Array type") ;
+                }) ;
+            }
+        }
+        return arrays ;
+    }
 }

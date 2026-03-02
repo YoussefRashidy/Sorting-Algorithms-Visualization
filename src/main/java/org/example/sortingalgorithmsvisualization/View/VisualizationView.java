@@ -5,18 +5,22 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.util.Duration;
+import org.example.sortingalgorithmsvisualization.Model.AnimationCallback;
 import org.example.sortingalgorithmsvisualization.Model.Events.*;
+import org.example.sortingalgorithmsvisualization.Model.SessionCallback;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VisualizationView extends Scene {
+public class VisualizationView extends Pane implements Animatable {
     private double[] normalizedNums;
     private Rectangle[] bars;
     private int gap = 4;
@@ -28,29 +32,7 @@ public class VisualizationView extends Scene {
     private int arrayMax;
 
 
-    public VisualizationView(Parent parent) {
-        super(parent);
-    }
 
-    public VisualizationView(Parent parent, double v, double v1) {
-        super(parent, v, v1);
-    }
-
-    public VisualizationView(Parent parent, Paint paint) {
-        super(parent, paint);
-    }
-
-    public VisualizationView(Parent parent, double v, double v1, Paint paint) {
-        super(parent, v, v1, paint);
-    }
-
-    public VisualizationView(Parent parent, double v, double v1, boolean b) {
-        super(parent, v, v1, b);
-    }
-
-    public VisualizationView(Parent parent, double v, double v1, boolean b, SceneAntialiasing sceneAntialiasing) {
-        super(parent, v, v1, b, sceneAntialiasing);
-    }
 
 
     public double[] getNormalizedNums() {
@@ -66,7 +48,10 @@ public class VisualizationView extends Scene {
     }
 
     public void initializeBars() {
-        Pane root = new Pane();
+        Pane root = this;
+        if (bars != null) {
+            this.getChildren().clear();
+        }
         bars = new Rectangle[normalizedNums.length];
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double height = bounds.getHeight();
@@ -86,10 +71,13 @@ public class VisualizationView extends Scene {
             root.getChildren().add(bar);
             bars[i] = bar;
         }
-        this.setRoot(root);
     }
 
-    public Timeline onComparison(ComparisonEvent event) {
+    public void resetView() {
+
+    }
+
+    public void onComparison(ComparisonEvent event , AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
 
@@ -103,12 +91,13 @@ public class VisualizationView extends Scene {
         tl1.setOnFinished(e -> {
             bars[index1].setFill(BAR_COLOR);
             bars[index2].setFill(BAR_COLOR);
+            onFinish.run();
         });
 
-        return tl1;
+        tl1.play();
     }
 
-    public Timeline onInterchange(SwapEvent event) {
+    public void onInterchange(SwapEvent event ,AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
 
@@ -128,16 +117,16 @@ public class VisualizationView extends Scene {
             Rectangle temp = bars[index1];
             bars[index1] = bars[index2];
             bars[index2] = temp;
+            onFinish.run();
         });
 
-        return tl1;
+        tl1.play();
     }
 
-    public Timeline onSet(SetEvent event) {
+    public void onSet(SetEvent event , AnimationCallback onFinish) {
         int index = event.index();
-        double val = (double) event.val();
-        double max = arrayMax;
-        double normalizedVal = val / max;
+        double val = event.val();
+        double normalizedVal = val / arrayMax;
 
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double height = bounds.getHeight();
@@ -149,37 +138,40 @@ public class VisualizationView extends Scene {
         KeyValue kvy = new KeyValue(bars[index].yProperty(), height - newBarHeight - padding, Interpolator.EASE_BOTH);
         KeyValue kvColor = new KeyValue(bars[index].fillProperty(), Color.LIME);
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), kvh, kvy, kvColor));
-        tl.setOnFinished(e -> bars[index].setFill(BAR_COLOR));
-        return tl;
+        tl.setOnFinished(e -> {
+            bars[index].setFill(BAR_COLOR) ;
+            onFinish.run();
+        });
+        tl.play();
     }
     /**
      * Plays a list of SortingEvents sequentially with proper animation timing.
      */
-    public void playEvents(List<SortingEvent> events) {
-        playEventAt(events, 0);
-    }
-
-    private void playEventAt(List<SortingEvent> events, int index) {
-        if (index >= events.size()) return;
-
-        SortingEvent event = events.get(index);
-        Timeline tl = switch (event) {
-            case ComparisonEvent ce -> onComparison(ce);
-            case SwapEvent se -> onInterchange(se);
-            case SetEvent se -> onSet(se);
-            case DivideEvent de -> null;
-        };
-        if (tl != null) {
-            var original = tl.getOnFinished();
-            tl.setOnFinished(e -> {
-                if (original != null) original.handle(e);
-                playEventAt(events, index + 1);
-            });
-            tl.play();
-        } else {
-            playEventAt(events, index + 1);
-        }
-    }
+//    public void playEvents(List<SortingEvent> events) {
+//        playEventAt(events, 0);
+//    }
+//
+//    private void playEventAt(List<SortingEvent> events, int index) {
+//        if (index >= events.size()) return;
+//
+//        SortingEvent event = events.get(index);
+//        Timeline tl = switch (event) {
+//            case ComparisonEvent ce -> onComparison(ce);
+//            case SwapEvent se -> onInterchange(se);
+//            case SetEvent se -> onSet(se);
+//            case DivideEvent de -> null;
+//        };
+//        if (tl != null) {
+//            var original = tl.getOnFinished();
+//            tl.setOnFinished(e -> {
+//                if (original != null) original.handle(e);
+//                playEventAt(events, index + 1);
+//            });
+//            tl.play();
+//        } else {
+//            playEventAt(events, index + 1);
+//        }
+//    }
 
     public int getAnimationDuration() {
         return animationDuration;
@@ -189,4 +181,31 @@ public class VisualizationView extends Scene {
         this.animationDuration = animationDuration;
     }
 
+    // Create simple alert for visualization info
+    public void finishAlert(String algoName , int interchangeCount , int ComparisonCount , SessionCallback onSessionFinish) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION) ;
+        alert.setTitle("Visualization Statistics");
+        alert.setHeaderText("Sorting completed");
+        alert.setContentText("Algorithm Name : "+algoName + "\nComparison Count : "+ComparisonCount +"\nInterchange Count : "+interchangeCount);
+        alert.setOnHidden( e -> {
+            // call manager to proceed with other arrays,algorithms,etc
+            onSessionFinish.onFinish();
+        });
+        alert.show();
+    }
+
+    @Override
+    public void play() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
 }

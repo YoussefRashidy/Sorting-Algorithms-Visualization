@@ -1,4 +1,5 @@
 package org.example.sortingalgorithmsvisualization.Model;
 
-public class SimulationManager {
+public interface SessionCallback {
+    void onFinish() ;
 }

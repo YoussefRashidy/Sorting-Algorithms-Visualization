@@ -18,6 +18,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.example.sortingalgorithmsvisualization.Controller.Controller;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -38,26 +39,36 @@ public class MainGUI extends Application {
     private static final Color CARD_BG     = Color.web("#1e293b");
     private static final Color CARD_HOVER  = Color.web("#334155");
 
+    // save stage for later use
+    Stage primaryStage ;
+
     // Cache scenes for later use
     InputScene inputScene = new InputScene("Visualization") ;
+    VisualizationView view = new VisualizationView() ;
+    StackPane mainView  ;
+
+    // Ref to controller
+    Controller controller = new Controller();
 
     // Array to hold animations
     ArrayList<Timeline> animations = new ArrayList<>() ;
 
     @Override
     public void start(Stage stage) throws Exception {
+        primaryStage = stage ;
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        StackPane root = new StackPane();
+        mainView = new StackPane();
         Pane bars = animatedBars(bounds.getWidth(), bounds.getHeight());
         VBox box = buildMainUI();
-        root.getChildren().addAll(bars, box);
-        root.setBackground(new Background(new BackgroundFill(BG_TOP,null,null)));
-        Scene scene = new Scene(root, Color.web("#121212"));
+        mainView.getChildren().addAll(bars, box);
+        mainView.setBackground(new Background(new BackgroundFill(BG_TOP,null,null)));
+        Scene scene = new Scene(mainView, Color.web("#121212"));
         scene.getStylesheets().add(getClass().getResource("/main-scene.css").toExternalForm()) ;
         stage.setScene(scene);
         stage.setWidth(bounds.getWidth());
         stage.setHeight(bounds.getHeight());
-
+        controller.setMainGUI(this);
+        this.inputScene.controller = controller ;
         stage.setFullScreen(true);
         stage.show();
     }
@@ -251,36 +262,6 @@ public class MainGUI extends Application {
 
         return card;
     }
-    private void transitionToScene(Stage stage, Scene nextScene) {
-        Parent currentRoot = stage.getScene().getRoot();
-
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), currentRoot);
-        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(300), currentRoot);
-
-        fadeOut.setToValue(0.0);
-        scaleOut.setToX(0.95);
-        scaleOut.setToY(0.95);
-
-        ParallelTransition exit = new ParallelTransition(fadeOut, scaleOut);
-        exit.setOnFinished(e -> {
-            stage.setScene(nextScene);
-            stage.setFullScreen(true);
-
-            Parent nextRoot = nextScene.getRoot();
-            nextRoot.setOpacity(0);
-            nextRoot.setScaleX(0.95);
-            nextRoot.setScaleY(0.95);
-
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(300), nextRoot);
-            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(300), nextRoot);
-            fadeIn.setToValue(1.0);
-            scaleIn.setToX(1.0);
-            scaleIn.setToY(1.0);
-
-            new ParallelTransition(fadeIn, scaleIn).play();
-        });
-        exit.play();
-    }
 
 
     public void play() {
@@ -292,5 +273,21 @@ public class MainGUI extends Application {
         animations.forEach(Timeline::pause);
     }
 
+    public void loadVisualization() {
+        primaryStage.getScene().setRoot(view);
+    }
 
+    public void loadMainView(){
+        primaryStage.getScene().setRoot(mainView);
+        play();
+    }
+
+
+    public VisualizationView getView() {
+        return view;
+    }
+
+    public void setView(VisualizationView view) {
+        this.view = view;
+    }
 }

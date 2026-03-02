@@ -1,13 +1,13 @@
 package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
 
-import org.example.sortingalgorithmsvisualization.Model.Events.SetEvent;
-import org.example.sortingalgorithmsvisualization.Model.Events.SortingEvent;
+import org.example.sortingalgorithmsvisualization.Model.Observers.Observable;
+import org.example.sortingalgorithmsvisualization.Model.Observers.Observer;
 import org.example.sortingalgorithmsvisualization.Model.PureSorting.SortingStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-abstract public class AbstractSimulationSorting implements Observable , SortingStrategy {
+abstract public class AbstractSimulationSorting implements Observable, SortingStrategy {
     private final List<Observer> observers = new ArrayList<>() ;
 
     @Override

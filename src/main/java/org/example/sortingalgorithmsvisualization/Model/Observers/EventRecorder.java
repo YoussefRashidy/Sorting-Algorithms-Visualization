@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.Observers;
 
 import org.example.sortingalgorithmsvisualization.Model.Events.ComparisonEvent;
 import org.example.sortingalgorithmsvisualization.Model.Events.SetEvent;
