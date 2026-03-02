@@ -25,6 +25,7 @@ public class VisualizationView extends Scene {
     private static final Color comparisonColor = Color.RED;
     private static final Color swapColor = Color.YELLOW;
     private int animationDuration = 200;
+    private int arrayMax;
 
 
     public VisualizationView(Parent parent) {
@@ -57,10 +58,10 @@ public class VisualizationView extends Scene {
     }
 
     public void setNormalizedNums(int[] nums) {
-        int max = Arrays.stream(nums).max().getAsInt();
+        arrayMax = Arrays.stream(nums).max().getAsInt();
 
         this.normalizedNums = Arrays.stream(nums.clone()).
-                mapToDouble(p -> (double) p / max)
+                mapToDouble(p -> (double) p / arrayMax)
                 .toArray();
     }
 
@@ -135,7 +136,7 @@ public class VisualizationView extends Scene {
     public Timeline onSet(SetEvent event) {
         int index = event.index();
         double val = (double) event.val();
-        double max = Arrays.stream(normalizedNums).max().orElse(1);
+        double max = arrayMax;
         double normalizedVal = val / max;
 
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();

@@ -18,7 +18,7 @@ public class SimulationInsertionSort extends AbstractSimulationSorting{
             }
             // Record Setting
             array[j+1] = key ;
-            setNotification(j+1, key);
+//            setNotification(j+1, key);
         }
         return array;
     }

@@ -19,6 +19,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MainGUI extends Application {
@@ -39,6 +40,9 @@ public class MainGUI extends Application {
 
     // Cache scenes for later use
     InputScene inputScene = new InputScene("Visualization") ;
+
+    // Array to hold animations
+    ArrayList<Timeline> animations = new ArrayList<>() ;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -101,7 +105,7 @@ public class MainGUI extends Application {
             tl.setCycleCount(Animation.INDEFINITE);
             tl.setDelay(Duration.seconds(3 * rng.nextDouble()));
             tl.play();
-
+            animations.add(tl) ;
             pane.getChildren().add(bar);
 
         }
@@ -227,16 +231,16 @@ public class MainGUI extends Application {
         card.setOnMousePressed(e -> {
             Stage primaryStage = (Stage) card.getScene().getWindow();
 
+            // pause animations
+            pause();
             // Fade out current scene
             FadeTransition fadeOut = new FadeTransition(Duration.millis(400), card.getScene().getRoot());
             fadeOut.setFromValue(1.0);
             fadeOut.setToValue(0.0);
             fadeOut.setOnFinished(event -> {
-                Parent root = inputScene.getRoot() ;
-                inputScene.setRoot(new Pane());
-                primaryStage.getScene().setRoot(root);
+                primaryStage.getScene().setRoot(inputScene);
                 // Fade in new scene
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), inputScene.getRoot());
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), inputScene);
                 fadeIn.setFromValue(0.0);
                 fadeIn.setToValue(1.0);
                 fadeIn.play();
@@ -276,6 +280,16 @@ public class MainGUI extends Application {
             new ParallelTransition(fadeIn, scaleIn).play();
         });
         exit.play();
+    }
+
+
+    public void play() {
+        animations.forEach(Timeline::play);
+    }
+
+
+    public void pause() {
+        animations.forEach(Timeline::pause);
     }
 
 

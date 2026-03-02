@@ -26,31 +26,31 @@ public class SimulationMergeSort extends AbstractSimulationSorting{
         int i , j ;
         i = j = 0 ;
         while (i < leftArray.length && j < rightArray.length) {
-            // Record Comparison
-            comparisonNotification(i , j);
+            // Record Comparison (solve comparison problem)
+            comparisonNotification(left+i , q+j+1);
             if (leftArray[i] <= rightArray[j]) {
+                //Record set (here it is considered swap)
+                setNotification(left+i+j, leftArray[i]);
                 array[left+ i + j] = leftArray[i] ;
-                //Record Swap (here it is considered swap)
-                swapNotification(left+i+j, left+i);
                 i++ ;
             }
             else {
+                //Record set (here it is considered swap)
+                setNotification(left+i+j, rightArray[j]);
                 array[left+i+j] = rightArray[j] ;
-                //Record Swap (here it is considered swap)
-                swapNotification(left+i+j, right+j);
                 j++;
             }
         }
         while (i < leftArray.length) {
+            //Record set (here it is considered swap)
+            setNotification(left+i+j, leftArray[i]);
             array[left+i+j] = leftArray[i] ;
-            //Record Swap (here it is considered swap)
-            swapNotification(left+i+j, left+i);
             i++ ;
         }
         while (j < rightArray.length) {
+            //Record set (here it is considered swap)
+            setNotification(left+i+j, rightArray[j]);
             array[left+i+j] = rightArray[j] ;
-            //Record Swap (here it is considered swap)
-            swapNotification(left+i+j, right+j);
             j++ ;
         }
 
