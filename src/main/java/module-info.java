@@ -1,6 +1,7 @@
 module org.example.sortingalgorithmsvisualization {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens org.example.sortingalgorithmsvisualization to javafx.fxml;
@@ -11,5 +12,6 @@ module org.example.sortingalgorithmsvisualization {
     exports org.example.sortingalgorithmsvisualization.Model.PureSorting;
     exports org.example.sortingalgorithmsvisualization.Controller;
     exports org.example.sortingalgorithmsvisualization.Model;
+    exports org.example.sortingalgorithmsvisualization.Model.Observers;
 
 }

@@ -1,5 +1,6 @@
 package org.example.sortingalgorithmsvisualization.Controller;
 
+import org.example.sortingalgorithmsvisualization.Model.ComparisonManager;
 import org.example.sortingalgorithmsvisualization.Model.PureSorting.InsertionSort;
 import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer.*;
 import org.example.sortingalgorithmsvisualization.Model.VisualizationManager;
@@ -20,6 +21,7 @@ public class Controller {
     int currentAlgo ;
     int currentArray;
     VisualizationManager manager = new VisualizationManager() ;
+    ComparisonManager comparisonManager = new ComparisonManager() ;
     MainGUI mainGUI ;
 
     public void setData(InputData data) {
@@ -31,30 +33,38 @@ public class Controller {
     }
 
     //Data processing methods
+    // TODO Refactor move each data processing mode to a separate method
     public void processData() {
-        if (data.autoGeneration) {
-            arrays = generator.generateBatch(data.arraySizes, data.generationMods,data.maxValue) ;
-        } else {
-            // Read data using file reader
-            String[] paths = data.files.stream().map(File::getPath).toArray(String[]::new);
-            try {
-                arrays = fileReader.readArrays(paths);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        if (mode.equalsIgnoreCase("visualization")) {
+            if (data.autoGeneration) {
+                arrays = generator.generateBatch(data.arraySizes, data.generationMods, data.maxValue);
+            } else {
+                // Read data using file reader
+                String[] paths = data.files.stream().map(File::getPath).toArray(String[]::new);
+                try {
+                    arrays = fileReader.readArrays(paths);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            simulationSortings = getAlgorithms(data.algorithms);
+            // now based on mode go to visualization manager or comparison manager
+            if (mode.equalsIgnoreCase("visualization")) {
+                // Instruct the main scene to load the visualization view
+                manager.setVisualizationView(mainGUI.getView());
+                mainGUI.loadVisualization();
+                manager.setNums(arrays.get(currentArray));
+                manager.setSort(simulationSortings.get(currentAlgo));
+                // Add call back such that once the manager finishes it gets the next array and algo
+                manager.startVisualization(() -> {
+                    this.loadNext();
+                });
             }
         }
-        simulationSortings = getAlgorithms(data.algorithms) ;
-        // now based on mode go to visualization manager or comparison manager
-        if (mode.equalsIgnoreCase("visualization")) {
-            // Instruct the main scene to load the visualization view
-            manager.setVisualizationView(mainGUI.getView()) ;
-            mainGUI.loadVisualization();
-            manager.setNums(arrays.get(currentArray));
-            manager.setSort(simulationSortings.get(currentAlgo));
-            // Add call back such that once the manager finishes it gets the next array and algo
-            manager.startVisualization(()->{
-                this.loadNext();
-            });
+        else {
+            // In comparison, the controller is not responsible for generating / loading the arrays or algorithms
+            // since comparison is easire and doesn't require any special concurrency between animation and steps
+
         }
     }
 
@@ -92,6 +102,16 @@ public class Controller {
             }) ;
         }
         return simulationAlgorithms ;
+    }
+
+    // Method to get auto configuration Data
+    private InputData getAutoComparisonData() {
+        InputData autoData = new InputData() ;
+        autoData.arraySizes = new ArrayList<>(List.of(100,500,1000,2500,5000,10000)) ;
+        autoData.autoGeneration = true ;
+        autoData.generationMods = new ArrayType[]{ArrayType.RANDOM, ArrayType.SORTED, ArrayType.INVERSELY_SORTED, ArrayType.NEARLY_SORTED};
+        autoData.algorithms = new ArrayList<>(List.of("Merge Sort","Bubble Sort","Insertion Sort","Selection Sort","Heap Sort")) ;
+        return autoData ;
     }
 
     public MainGUI getMainGUI() {

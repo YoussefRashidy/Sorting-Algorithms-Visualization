@@ -1,12 +1,15 @@
 package org.example.sortingalgorithmsvisualization.View;
 
 import javafx.animation.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -15,12 +18,15 @@ import javafx.util.Duration;
 import org.example.sortingalgorithmsvisualization.Model.AnimationCallback;
 import org.example.sortingalgorithmsvisualization.Model.Events.*;
 import org.example.sortingalgorithmsvisualization.Model.SessionCallback;
+import javafx.scene.control.Button;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
-public class VisualizationView extends Pane implements Animatable {
+public class VisualizationView extends StackPane implements Animatable {
     private double[] normalizedNums;
     private Rectangle[] bars;
     private int gap = 4;
@@ -30,6 +36,9 @@ public class VisualizationView extends Pane implements Animatable {
     private static final Color swapColor = Color.YELLOW;
     private int animationDuration = 200;
     private int arrayMax;
+    private Timeline currentAnimation ;
+    private VBox menu ;
+
 
 
 
@@ -46,9 +55,35 @@ public class VisualizationView extends Pane implements Animatable {
                 mapToDouble(p -> (double) p / arrayMax)
                 .toArray();
     }
+    public void initializeView(){
+        initializeBars();
+        menuBox();
+        this.getChildren().add(menu) ;
+        // Align the menu to the top right corner
+        StackPane.setAlignment(menu, Pos.TOP_RIGHT);
+        // set the size to preferred size otherwise stack pane will stretch it
+        menu.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        StackPane.setMargin(menu, new Insets(15,15,0,0));
+        menu.setOpacity(0.10);
+        menu.setPadding(new Insets(20,20,20,20));
+        menu.setOnMouseEntered(e -> {
+            menu.setOpacity(1);
+        });
+        menu.setOnMouseExited(e->{
+            menu.setOpacity(0.1);
+        });
 
+        // style the menu
+        menu.setStyle("""
+                -fx-background-color: rgba(15,23,42,0.9);
+                -fx-background-radius: 12px;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0.3, 0, 4)
+                """);
+
+
+    }
     public void initializeBars() {
-        Pane root = this;
+        Pane root = new Pane();
         if (bars != null) {
             this.getChildren().clear();
         }
@@ -71,11 +106,81 @@ public class VisualizationView extends Pane implements Animatable {
             root.getChildren().add(bar);
             bars[i] = bar;
         }
+        this.getChildren().add(root) ;
     }
 
     public void resetView() {
-
+        if (bars != null) {
+            this.getChildren().clear();
+        }
     }
+
+    // this menu will allow user to change speed / pause or (reset) visualization
+    private void menuBox() {
+        menu = new VBox(10) ;
+        Label algorithmName = new Label();
+        algorithmName.setText("Coming soon");
+        HBox buttons = new HBox(12) ;
+        Button speedUp = new Button() ;
+        speedUp.setText("⏩");
+        Button speedDown = new Button() ;
+        speedDown.setText("⏪")  ;
+        Button pauseStart = new Button() ;
+        pauseStart.setText("⏸");
+        buttons.getChildren().addAll(speedDown,speedUp,pauseStart) ;
+        menu.getChildren().addAll(algorithmName,buttons) ;
+        // Style label
+        algorithmName.setStyle("""
+                -fx-font-family: 'Arial Narrow';
+                -fx-font-size: 20px;
+                -fx-text-fill: White;
+                """);
+        // Style buttons
+        speedUp.setStyle("""
+                -fx-font-size: 18px;
+                -fx-font-family: Arial;
+                -fx-text-fill: White;
+                -fx-background-radius: 10px;
+                """);
+        speedDown.setStyle("""
+                -fx-font-size: 18px;
+                -fx-font-family: Arial;
+                -fx-text-fill: White;
+                -fx-background-radius: 10px;
+                """);
+        pauseStart.setStyle("""
+                -fx-font-size: 18px;
+                -fx-font-family: Arial;
+                -fx-text-fill: White;
+                -fx-background-radius: 10px;
+                """);
+        speedUp.setOnAction(e ->{
+            if (animationDuration > 10 ) {
+                animationDuration /= 2 ;
+            }
+        });
+        speedDown.setOnAction(e->{
+            if (animationDuration < 1000) {
+                switch (animationDuration) {
+                    case 200 -> animationDuration = 400 ;
+                    case 400 -> animationDuration = 800 ;
+                    case 800 -> animationDuration = 1000 ;
+                }
+            }
+        });
+
+        pauseStart.setOnAction(e -> {
+            if (currentAnimation.getStatus() == Animation.Status.RUNNING) {
+                pause();
+                pauseStart.setText("▶");
+            }
+            else {
+                play();
+                pauseStart.setText("⏸");
+            }
+        });
+    }
+
 
     public void onComparison(ComparisonEvent event , AnimationCallback onFinish) {
         int index1 = event.index1();
@@ -93,6 +198,7 @@ public class VisualizationView extends Pane implements Animatable {
             bars[index2].setFill(BAR_COLOR);
             onFinish.run();
         });
+        currentAnimation = tl1;
 
         tl1.play();
     }
@@ -119,6 +225,7 @@ public class VisualizationView extends Pane implements Animatable {
             bars[index2] = temp;
             onFinish.run();
         });
+        currentAnimation = tl1;
 
         tl1.play();
     }
@@ -142,6 +249,7 @@ public class VisualizationView extends Pane implements Animatable {
             bars[index].setFill(BAR_COLOR) ;
             onFinish.run();
         });
+        currentAnimation = tl;
         tl.play();
     }
     /**
@@ -196,16 +304,16 @@ public class VisualizationView extends Pane implements Animatable {
 
     @Override
     public void play() {
-
+        currentAnimation.play();
     }
 
     @Override
     public void pause() {
-
+        currentAnimation.pause();
     }
 
     @Override
     public void stop() {
-
+        currentAnimation.stop();
     }
 }

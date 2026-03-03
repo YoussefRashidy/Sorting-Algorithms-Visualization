@@ -56,7 +56,7 @@ public class VisualizationManager {
         currentEventIndex = 0 ;
         visualizationView.setNormalizedNums(nums);
 //        visualizationView.setManager(this);
-        visualizationView.initializeBars();
+        visualizationView.initializeView();
 
         // a small delay such that the view fully loads before starting animation
         PauseTransition beforePlayPause = new PauseTransition(Duration.millis(1000)) ;
