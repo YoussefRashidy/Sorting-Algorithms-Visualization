@@ -10,4 +10,5 @@ public class InputData {
     public ArrayList<File> files ;
     public ArrayList<String> algorithms = new ArrayList<>();
     public ArrayType[] generationMods;
+    public int numberOfRuns;
 }

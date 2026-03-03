@@ -111,6 +111,7 @@ public class Controller {
         autoData.autoGeneration = true ;
         autoData.generationMods = new ArrayType[]{ArrayType.RANDOM, ArrayType.SORTED, ArrayType.INVERSELY_SORTED, ArrayType.NEARLY_SORTED};
         autoData.algorithms = new ArrayList<>(List.of("Merge Sort","Bubble Sort","Insertion Sort","Selection Sort","Heap Sort")) ;
+        autoData.maxValue = 100000 ;
         return autoData ;
     }
 
