@@ -82,4 +82,11 @@ public class ComparisonStat {
     public void setNumOfInterchange(long numOfInterchange) {
         this.numOfInterchange = numOfInterchange;
     }
+
+    @Override
+    public String toString() {
+        return sortingAlgorithm+","+arraySize+","+generationMode+","+numberOfruns+","+
+                averageTime+","+minTime+","+maxTime+","+numOfComparison+","+numOfInterchange
+                +'\n';
+    }
 }

@@ -91,7 +91,7 @@ public class VisualizationView extends StackPane implements Animatable {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double height = bounds.getHeight();
         double width = bounds.getWidth();
-        gap = Math.min(200.0/ normalizedNums.length , 4 ) ;
+        gap = Math.min(200.0 / normalizedNums.length, 4);
         double barWidth = (width / normalizedNums.length) - gap;
         double heightFactor = height - 2 * padding;
         for (int i = 0; i < normalizedNums.length; i++) {
@@ -121,6 +121,7 @@ public class VisualizationView extends StackPane implements Animatable {
         menu = new VBox(10);
         Label algorithmName = new Label();
         algorithmName.setText("Coming soon");
+        Label controls = new Label("⚙ Controls");
         HBox buttons = new HBox(12);
         Button speedUp = new Button();
         speedUp.setText("⏩");
@@ -128,36 +129,70 @@ public class VisualizationView extends StackPane implements Animatable {
         speedDown.setText("⏪");
         Button pauseStart = new Button();
         pauseStart.setText("⏸");
+        Label speedLabel = new Label("Speed: 1x");
         buttons.getChildren().addAll(speedDown, speedUp, pauseStart);
-        menu.getChildren().addAll(algorithmName, buttons);
+        menu.getChildren().addAll(algorithmName,controls, buttons , speedLabel);
         // Style label
         algorithmName.setStyle("""
-                -fx-font-family: 'Arial Narrow';
-                -fx-font-size: 20px;
-                -fx-text-fill: White;
+                    -fx-font-size: 16px;
+                    -fx-text-fill: #38bdf8;
+                    -fx-padding: 6 12 6 12;
+                    -fx-cursor: hand;
+                    -fx-border-radius: 8px;
+                    -fx-border-width: 1;
+                """);
+        controls.setStyle("""
+                    -fx-font-size: 16px;
+                    -fx-text-fill: #38bdf8;
+                    -fx-padding: 6 12 6 12;
+                    -fx-cursor: hand;
+                    -fx-border-radius: 8px;
+                    -fx-border-width: 1;
                 """);
         // Style buttons
         speedUp.setStyle("""
-                -fx-font-size: 18px;
-                -fx-font-family: Arial;
-                -fx-text-fill: White;
-                -fx-background-radius: 10px;
+                    -fx-font-size: 16px;
+                    -fx-background-color: #1e3a5f;
+                    -fx-text-fill: #38bdf8;
+                    -fx-background-radius: 8px;
+                    -fx-padding: 6 12 6 12;
+                    -fx-cursor: hand;
+                    -fx-border-color: #334155;
+                    -fx-border-radius: 8px;
+                    -fx-border-width: 1;
                 """);
         speedDown.setStyle("""
-                -fx-font-size: 18px;
-                -fx-font-family: Arial;
-                -fx-text-fill: White;
-                -fx-background-radius: 10px;
+                    -fx-font-size: 16px;
+                    -fx-background-color: #1e3a5f;
+                    -fx-text-fill: #38bdf8;
+                    -fx-background-radius: 8px;
+                    -fx-padding: 6 12 6 12;
+                    -fx-cursor: hand;
+                    -fx-border-color: #334155;
+                    -fx-border-radius: 8px;
+                    -fx-border-width: 1;
                 """);
         pauseStart.setStyle("""
-                -fx-font-size: 18px;
-                -fx-font-family: Arial;
-                -fx-text-fill: White;
-                -fx-background-radius: 10px;
+                    -fx-font-size: 16px;
+                    -fx-background-color: #1e3a5f;
+                    -fx-text-fill: #38bdf8;
+                    -fx-background-radius: 8px;
+                    -fx-padding: 6 12 6 12;
+                    -fx-cursor: hand;
+                    -fx-border-color: #334155;
+                    -fx-border-radius: 8px;
+                    -fx-border-width: 1;
                 """);
+        speedLabel.setStyle("""
+                    -fx-font-family: 'Courier New';
+                    -fx-font-size: 12px;
+                    -fx-text-fill: #64748b;
+                """);
+
         speedUp.setOnAction(e -> {
             if (animationDuration > 10) {
                 animationDuration /= 2;
+                speedLabel.setText("Speed: " + (200 / animationDuration) + "x") ;
             }
         });
         speedDown.setOnAction(e -> {
@@ -167,6 +202,7 @@ public class VisualizationView extends StackPane implements Animatable {
                     case 400 -> animationDuration = 800;
                     case 800 -> animationDuration = 1000;
                 }
+                speedLabel.setText("Speed: 0." + (200 / animationDuration * 10) + "x") ;
             }
         });
 
@@ -254,20 +290,20 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     public void onDivide(DivideEvent event, AnimationCallback onFinish) {
-        int left = event.index2() ;
-        int right = event.index3() ;
+        int left = event.index2();
+        int right = event.index3();
         Timeline tl = new Timeline();
-        int timeShift = 0 ;
-        for (int i = left ; i < event.index() ; i++) {
+        int timeShift = 0;
+        for (int i = left; i < event.index(); i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration ), kv);
-            tl.getKeyFrames().add(frame) ;
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            tl.getKeyFrames().add(frame);
         }
-        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD))) ;
-        for (int i = event.index()+1 ; i <= right ; i++) {
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD)));
+        for (int i = event.index() + 1; i <= right; i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration), kv);
-            tl.getKeyFrames().add(frame) ;
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            tl.getKeyFrames().add(frame);
         }
         tl.setOnFinished(e -> {
             for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
@@ -281,12 +317,12 @@ public class VisualizationView extends StackPane implements Animatable {
     public void onMerge(MergeEvent event, AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
-        int timeShift = 0 ;
+        int timeShift = 0;
         Timeline tl = new Timeline();
         for (int i = index1; i <= index2; i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#FF6F61"));
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration), kv);
-            tl.getKeyFrames().add(frame) ;
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            tl.getKeyFrames().add(frame);
 
         }
 
@@ -301,12 +337,12 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     public void onSort(SortedEvent event, AnimationCallback onFinish) {
-        int timeShift = 0 ;
+        int timeShift = 0;
         Timeline tl = new Timeline();
         for (Rectangle bar : bars) {
             KeyValue kv = new KeyValue(bar.fillProperty(), Color.GREEN);
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration), kv);
-            tl.getKeyFrames().add(frame) ;
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            tl.getKeyFrames().add(frame);
         }
 
         tl.setOnFinished(e -> {
@@ -341,21 +377,21 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     //TODO style the pop-up
-    public void finishPopUp(String algoName, int interchangeCount, int ComparisonCount, SessionCallback onSessionFinish){
-        Stage popup = new Stage() ;
+    public void finishPopUp(String algoName, int interchangeCount, int ComparisonCount, SessionCallback onSessionFinish) {
+        Stage popup = new Stage();
         popup.setTitle("Visualization Statistics");
         popup.initOwner(this.getScene().getWindow());
         popup.initModality(Modality.APPLICATION_MODAL);
-        Label header = new Label("Visualization Completed") ;
-        Label Content = new Label("Algorithm Name : " + algoName + "\nComparison Count : " + ComparisonCount + "\nInterchange Count : " + interchangeCount) ;
-        Button closePopUp = new Button("Next") ;
-        closePopUp.setOnAction(e->{
+        Label header = new Label("Visualization Completed");
+        Label Content = new Label("Algorithm Name : " + algoName + "\nComparison Count : " + ComparisonCount + "\nInterchange Count : " + interchangeCount);
+        Button closePopUp = new Button("Next");
+        closePopUp.setOnAction(e -> {
             popup.close();
         });
-        VBox layoutBox = new VBox(10 , header , Content , closePopUp) ;
+        VBox layoutBox = new VBox(10, header, Content, closePopUp);
         layoutBox.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layoutBox,400,200) ;
-        popup.setOnHidden(e->{
+        Scene scene = new Scene(layoutBox, 400, 200);
+        popup.setOnHidden(e -> {
             onSessionFinish.onFinish();
         });
         popup.setScene(scene);
