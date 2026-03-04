@@ -48,24 +48,6 @@ public class ComparisonView extends VBox {
                 -fx-font-size: 13px;
                 -fx-text-fill: White;
                 """);
-
-        Platform.runLater(() -> {
-            table.lookupAll(".column-header").forEach(node -> {
-                node.setStyle("""
-                            -fx-background-color: #f3f4f6;
-                            -fx-text-fill: #111827;
-                            -fx-font-weight: bold;
-                            -fx-font-size: 13px;
-                            -fx-pref-height: 50px;
-                            -fx-border-color: #d1d5db;
-                            -fx-border-width: 1 1 2 1;
-                            -fx-alignment: CENTER-LEFT;
-                            -fx-padding: 5 5 5 5;
-                            -fx-border-radius: 3px;
-                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0.3, 0, 2);
-                        """);
-            });
-        });
         // Define the columns
         TableColumn<ComparisonStat, String> sortingAlgorithm = new TableColumn<>("Algorithm");
         sortingAlgorithm.setCellValueFactory(new PropertyValueFactory<>("sortingAlgorithm"));
@@ -134,15 +116,15 @@ public class ComparisonView extends VBox {
             KeyValue v3 = new KeyValue(placeHolder.textProperty(), "No results have arrived yet Loading..");
             KeyValue v4 = new KeyValue(placeHolder.textProperty(), "No results have arrived yet Loading...");
             KeyFrame frame1 = new KeyFrame(Duration.ZERO , v1) ;
-            KeyFrame frame2 = new KeyFrame(Duration.seconds(0.3) , v2) ;
-            KeyFrame frame3 = new KeyFrame(Duration.seconds(0.5) , v3) ;
-            KeyFrame frame4 = new KeyFrame(Duration.seconds(0.7) , v4) ;
+            KeyFrame frame2 = new KeyFrame(Duration.seconds(0.5) , v2) ;
+            KeyFrame frame3 = new KeyFrame(Duration.seconds(1) , v3) ;
+            KeyFrame frame4 = new KeyFrame(Duration.seconds(1.5) , v4) ;
             Timeline tl = new Timeline(frame1,frame2,frame3,frame4) ;
             tl.setCycleCount(Animation.INDEFINITE) ;
             tl.play();
             placeHolder.setStyle("""
-                    -fx-text-fill: Black;
-                    -fx-font: Ariel;
+                    -fx-text-fill: #0ea5e9;
+                    -fx-font: 'Segoe UI';
                     -fx-font-size: 30px;
                     -fx-text-alignment: Center;
                     """);
@@ -153,6 +135,24 @@ public class ComparisonView extends VBox {
         } else {
             buildTable();
             this.getChildren().add(table);
+            Platform.runLater(() -> {
+                table.lookupAll(".column-header").forEach(node -> {
+                    node.setStyle("""
+                            -fx-background-color: #f3f4f6;
+                            -fx-text-fill: #111827;
+                            -fx-font-weight: bold;
+                            -fx-font-size: 13px;
+                            -fx-pref-height: 50px;
+                            -fx-border-color: #d1d5db;
+                            -fx-border-width: 1 1 2 1;
+                            -fx-alignment: CENTER-LEFT;
+                            -fx-padding: 5 5 5 5;
+                            -fx-border-radius: 3px;
+                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0.3, 0, 2);
+                        """);
+                });
+                table.refresh();
+            });
         }
     }
 
