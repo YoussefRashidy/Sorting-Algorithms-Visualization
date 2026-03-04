@@ -35,7 +35,7 @@ public class Controller {
     //Data processing methods
     // TODO Refactor move each data processing mode to a separate method
     public void processData() {
-        if (mode.equalsIgnoreCase("visualization")) {
+        if (mode.equalsIgnoreCase("Visualization Mode")) {
             if (data.autoGeneration) {
                 arrays = generator.generateBatch(data.arraySizes, data.generationMods, data.maxValue);
             } else {
@@ -64,9 +64,31 @@ public class Controller {
         else {
             // In comparison, the controller is not responsible for generating / loading the arrays or algorithms
             // since comparison is easire and doesn't require any special concurrency between animation and steps
+            comparisonManager.setData(data);
+            mainGUI.loadComparisonView();
+            Thread comparisonThread = new Thread(()->{
+                comparisonManager.setData(data);
+                var statTable = comparisonManager.runComparison() ;
+                javafx.application.Platform.runLater(() -> mainGUI.loadStatTable(statTable)  );
 
+            }) ;
+            comparisonThread.start();
         }
     }
+
+    public void runAutoComparison() {
+        data = getAutoComparisonData() ;
+        // instruct main gui to load the table view
+        mainGUI.loadComparisonView();
+        Thread comparisonThread = new Thread(()->{
+            comparisonManager.setData(data);
+            var statTable = comparisonManager.runComparison() ;
+            javafx.application.Platform.runLater(() -> mainGUI.loadStatTable(statTable)  );
+
+        }) ;
+        comparisonThread.start();
+    }
+
 
     public void loadNext() {
         currentAlgo++;
@@ -105,7 +127,7 @@ public class Controller {
     }
 
     // Method to get auto configuration Data
-    private InputData getAutoComparisonData() {
+    public InputData getAutoComparisonData() {
         InputData autoData = new InputData() ;
         autoData.arraySizes = new ArrayList<>(List.of(100,500,1000,2500,5000,10000)) ;
         autoData.autoGeneration = true ;

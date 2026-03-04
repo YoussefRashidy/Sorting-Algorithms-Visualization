@@ -18,9 +18,13 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.example.sortingalgorithmsvisualization.Controller.ComparisonArray;
 import org.example.sortingalgorithmsvisualization.Controller.Controller;
+import org.example.sortingalgorithmsvisualization.Model.ComparisonStat;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Random;
 
 public class MainGUI extends Application {
@@ -45,6 +49,7 @@ public class MainGUI extends Application {
     // Cache scenes for later use
     InputScene inputScene = new InputScene("Visualization") ;
     VisualizationView view = new VisualizationView() ;
+    ComparisonView comparisonView = new ComparisonView() ;
     StackPane mainView  ;
 
     // Ref to controller
@@ -163,17 +168,7 @@ public class MainGUI extends Application {
 
     private StackPane buildOptionCard(String modeText, String desc, String buttonText, Color accent) {
 
-        Rectangle bg = new Rectangle(280, 220);
-        bg.setFill(CARD_BG);
-        bg.setArcWidth(12);
-        bg.setArcHeight(12);
-        // Thin colored top border via a second small rectangle
-        Rectangle topBorder = new Rectangle(280, 4);
-        topBorder.setFill(accent);
-        topBorder.setArcWidth(12);
-        topBorder.setArcHeight(12);
 
-        // ── Text content ────────────────────────────────────────────────────
         Label nameLabel = new Label(modeText);
         nameLabel.setFont(Font.font("Courier New", FontWeight.BOLD, 18));
         nameLabel.setTextFill(accent);
@@ -182,8 +177,8 @@ public class MainGUI extends Application {
         descLabel.setFont(Font.font("Courier New", 12));
         descLabel.setTextFill(TEXT_SUB);
         descLabel.setLineSpacing(4);
+        descLabel.setWrapText(true);
 
-        // Spacer to push CTA to bottom
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
@@ -196,21 +191,18 @@ public class MainGUI extends Application {
                 new CornerRadii(6), Insets.EMPTY)));
 
         VBox content = new VBox(14, nameLabel, descLabel, spacer, cta);
+        content.setBackground(new Background(new BackgroundFill(BG_BOTTOM,CornerRadii.EMPTY,Insets.EMPTY)));
+        content.setBorder(new Border(new BorderStroke(accent,BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(4, 0, 0, 0))));
         content.setPadding(new Insets(24, 24, 20, 24));
         content.setPrefSize(280, 220);
 
         StackPane card = new StackPane();
-        card.getChildren().addAll(bg, content);
+        card.getChildren().addAll( content);
 
-        // Put the colored border on top-center
-        StackPane.setAlignment(topBorder, Pos.TOP_CENTER);
-        card.getChildren().add(topBorder);
 
-        // ── Hover & click interactions ──────────────────────────────────────
         card.setOnMouseEntered(e -> {
-            bg.setFill(CARD_HOVER);
+            content.setBackground(new Background(new BackgroundFill(CARD_HOVER,new CornerRadii(5),Insets.EMPTY)));
             card.setCursor(javafx.scene.Cursor.HAND);
-            // Subtle scale up
             ScaleTransition st = new ScaleTransition(Duration.millis(120), card);
             st.setToX(1.03);
             st.setToY(1.03);
@@ -218,7 +210,7 @@ public class MainGUI extends Application {
         });
 
         card.setOnMouseExited(e -> {
-            bg.setFill(CARD_BG);
+            content.setBackground(new Background(new BackgroundFill(CARD_BG,new CornerRadii(5),Insets.EMPTY)));
             ScaleTransition st = new ScaleTransition(Duration.millis(120), card);
             st.setToX(1.0);
             st.setToY(1.0);
@@ -249,6 +241,7 @@ public class MainGUI extends Application {
             fadeOut.setFromValue(1.0);
             fadeOut.setToValue(0.0);
             fadeOut.setOnFinished(event -> {
+                inputScene.setMode(modeText);
                 primaryStage.getScene().setRoot(inputScene);
                 // Fade in new scene
                 FadeTransition fadeIn = new FadeTransition(Duration.millis(400), inputScene);
@@ -282,6 +275,12 @@ public class MainGUI extends Application {
         play();
     }
 
+    public void loadComparisonView(){
+        inputScene.pause();
+        comparisonView.buildView();
+        primaryStage.getScene().setRoot(comparisonView);
+    }
+
 
     public VisualizationView getView() {
         return view;
@@ -289,5 +288,10 @@ public class MainGUI extends Application {
 
     public void setView(VisualizationView view) {
         this.view = view;
+    }
+
+    public void loadStatTable(LinkedHashMap<ComparisonArray, List<ComparisonStat>> statTable) {
+        comparisonView.setStatTable(statTable);
+        comparisonView.buildView();
     }
 }

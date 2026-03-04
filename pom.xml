@@ -38,6 +38,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,6 +75,15 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Run the comparison-view mock test: mvn javafx:run@mock -->
+                        <id>mock</id>
+                        <configuration>
+                            <mainClass>
+                                org.example.sortingalgorithmsvisualization/org.example.sortingalgorithmsvisualization.View.ComparisonViewMockTest
+                            </mainClass>
                         </configuration>
                     </execution>
                 </executions>

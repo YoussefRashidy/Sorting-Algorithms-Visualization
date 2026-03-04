@@ -1,15 +1,19 @@
 package org.example.sortingalgorithmsvisualization.View;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 import org.example.sortingalgorithmsvisualization.Controller.ComparisonArray;
 import org.example.sortingalgorithmsvisualization.Model.ComparisonStat;
 
@@ -112,7 +116,44 @@ public class ComparisonView extends VBox {
     }
 
     public void buildView() {
-        this.getChildren().add(table);
+        this.getChildren().clear();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        // TODO fix placeholder issue
+        if (statTable == null || statTable.isEmpty()) {
+            table = new TableView<>();
+            table.setPrefWidth(bounds.getWidth());
+            table.setPrefHeight(bounds.getHeight());
+            Label placeHolder = new Label("No results have arrived yet Loading") ;
+            ProgressIndicator indicator = new ProgressIndicator() ;
+            indicator.setPrefSize(60, 60);
+            VBox loadingBox = new VBox(12 , placeHolder , indicator) ;
+            loadingBox.setAlignment(Pos.CENTER);
+            // A simple animation for loading
+            KeyValue v1 = new KeyValue(placeHolder.textProperty(), "No results have arrived yet Loading");
+            KeyValue v2 = new KeyValue(placeHolder.textProperty(), "No results have arrived yet Loading.");
+            KeyValue v3 = new KeyValue(placeHolder.textProperty(), "No results have arrived yet Loading..");
+            KeyValue v4 = new KeyValue(placeHolder.textProperty(), "No results have arrived yet Loading...");
+            KeyFrame frame1 = new KeyFrame(Duration.ZERO , v1) ;
+            KeyFrame frame2 = new KeyFrame(Duration.seconds(0.3) , v2) ;
+            KeyFrame frame3 = new KeyFrame(Duration.seconds(0.5) , v3) ;
+            KeyFrame frame4 = new KeyFrame(Duration.seconds(0.7) , v4) ;
+            Timeline tl = new Timeline(frame1,frame2,frame3,frame4) ;
+            tl.setCycleCount(Animation.INDEFINITE) ;
+            tl.play();
+            placeHolder.setStyle("""
+                    -fx-text-fill: Black;
+                    -fx-font: Ariel;
+                    -fx-font-size: 30px;
+                    -fx-text-alignment: Center;
+                    """);
+            table.setPlaceholder(loadingBox);
+            this.getChildren().addAll(table) ;
+            this.setAlignment(Pos.CENTER);
+            table.refresh();
+        } else {
+            buildTable();
+            this.getChildren().add(table);
+        }
     }
 
     private <T> void styleColumn(TableColumn<ComparisonStat, T> col) {
