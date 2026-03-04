@@ -36,7 +36,19 @@ abstract public class AbstractSimulationSorting implements Observable, SortingSt
     }
 
     @Override
-    public void divideNotification(int index) {
+    public void divideNotification(int index, int index2 , int index3) {
         //No-Op for now
+        for (Observer observer : observers) observer.divide(index, index2 ,index3);
+    }
+
+    @Override
+    public void mergeNotification(int index1 , int index2) {
+        // No-Op fir now
+        for (Observer observer : observers) observer.merge(index1,index2);
+
+    }
+    @Override
+    public void sortNotification() {
+        for (Observer observer : observers) observer.sortEvent();
     }
 }

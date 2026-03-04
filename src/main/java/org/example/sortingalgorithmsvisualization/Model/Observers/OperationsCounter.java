@@ -16,8 +16,24 @@ public class OperationsCounter implements Observer{
 
     @Override
     public void set(int index, int val) {
+        // Here sets are counted as interchanges for simplicity
 //        set+=1;
         swap++;
+    }
+
+    @Override
+    public void merge(int index1, int index2) {
+        // NO-OP
+    }
+
+    @Override
+    public void sortEvent() {
+        //NO-OP
+    }
+
+    @Override
+    public void divide(int index, int index2, int index3) {
+        // NO-OP
     }
 
     public int getSwap() {

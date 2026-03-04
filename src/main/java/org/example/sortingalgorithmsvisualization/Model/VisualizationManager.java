@@ -2,10 +2,7 @@ package org.example.sortingalgorithmsvisualization.Model;
 
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
-import org.example.sortingalgorithmsvisualization.Model.Events.ComparisonEvent;
-import org.example.sortingalgorithmsvisualization.Model.Events.SetEvent;
-import org.example.sortingalgorithmsvisualization.Model.Events.SortingEvent;
-import org.example.sortingalgorithmsvisualization.Model.Events.SwapEvent;
+import org.example.sortingalgorithmsvisualization.Model.Events.*;
 import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer.AbstractSimulationSorting;
 import org.example.sortingalgorithmsvisualization.Model.Observers.EventRecorder;
 import org.example.sortingalgorithmsvisualization.Model.Observers.OperationsCounter;
@@ -75,13 +72,16 @@ public class VisualizationManager {
                 case ComparisonEvent cp -> visualizationView.onComparison(cp,onFinish);
                 case SetEvent cp -> visualizationView.onSet(cp,onFinish);
                 case SwapEvent cp -> visualizationView.onInterchange(cp,onFinish);
+                case MergeEvent me -> visualizationView.onMerge(me,onFinish);
+                case DivideEvent dv -> visualizationView.onDivide(dv, onFinish);
+                case SortedEvent so -> visualizationView.onSort(so, onFinish);
 //                case ComparisonEvent cp -> visualizationView.onComparison(cp);
                 default -> throw new IllegalArgumentException("Unsupported event") ;
             }
         }
         else {
             //TODO instruct the view to pop up windows showing num of comparisons
-            visualizationView.finishAlert("Coming soon", counter.getComparison(), counter.getSwap(),this.onSessionFinish);
+            visualizationView.finishPopUp("Coming soon", counter.getComparison(), counter.getSwap(),this.onSessionFinish);
         }
     }
 

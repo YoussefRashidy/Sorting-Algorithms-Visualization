@@ -49,7 +49,7 @@ public class Controller {
             }
             simulationSortings = getAlgorithms(data.algorithms);
             // now based on mode go to visualization manager or comparison manager
-            if (mode.equalsIgnoreCase("visualization")) {
+            if (mode.equalsIgnoreCase("Visualization Mode")) {
                 // Instruct the main scene to load the visualization view
                 manager.setVisualizationView(mainGUI.getView());
                 mainGUI.loadVisualization();
@@ -97,7 +97,7 @@ public class Controller {
             currentArray++ ;
             if (currentArray >= arrays.size()) {
                 // here we have finished all arrays and algorithms so we will return to main scene
-                // insrtuct the veiw to load tha main root
+                // instruct the view to load tha main root
                 mainGUI.loadMainView();
                 currentAlgo = currentArray = 0 ;
                 return;

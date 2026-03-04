@@ -14,6 +14,7 @@ public class SimulationSelectionSort extends AbstractSimulationSorting{
             array[i] = array[minIndex] ;
             array[minIndex] = temp;
         }
+        sortNotification();
         return array;
     }
 }

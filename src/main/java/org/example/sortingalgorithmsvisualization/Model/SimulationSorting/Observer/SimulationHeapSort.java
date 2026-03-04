@@ -11,6 +11,7 @@ public class SimulationHeapSort extends AbstractSimulationSorting {
             heapSize--;
             maxHeapify(0, array);
         }
+        sortNotification();
         return array;
     }
 

@@ -1,4 +1,4 @@
 package org.example.sortingalgorithmsvisualization.Model.Events;
 
-public sealed interface SortingEvent permits ComparisonEvent , SwapEvent ,DivideEvent,SetEvent {
+public sealed interface SortingEvent permits ComparisonEvent, DivideEvent, MergeEvent, SetEvent, SortedEvent, SwapEvent {
 }

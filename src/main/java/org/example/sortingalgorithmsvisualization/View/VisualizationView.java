@@ -13,7 +13,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sortingalgorithmsvisualization.Model.AnimationCallback;
 import org.example.sortingalgorithmsvisualization.Model.Events.*;
@@ -29,19 +31,15 @@ import java.util.Stack;
 public class VisualizationView extends StackPane implements Animatable {
     private double[] normalizedNums;
     private Rectangle[] bars;
-    private int gap = 4;
+    private double gap = 4;
     private int padding = 20;
     private static final Color BAR_COLOR = Color.web("#38bdf8");// soft cyan
     private static final Color comparisonColor = Color.RED;
     private static final Color swapColor = Color.YELLOW;
     private int animationDuration = 200;
     private int arrayMax;
-    private Timeline currentAnimation ;
-    private VBox menu ;
-
-
-
-
+    private Timeline currentAnimation;
+    private VBox menu;
 
 
     public double[] getNormalizedNums() {
@@ -55,21 +53,22 @@ public class VisualizationView extends StackPane implements Animatable {
                 mapToDouble(p -> (double) p / arrayMax)
                 .toArray();
     }
-    public void initializeView(){
+
+    public void initializeView() {
         initializeBars();
         menuBox();
-        this.getChildren().add(menu) ;
+        this.getChildren().add(menu);
         // Align the menu to the top right corner
         StackPane.setAlignment(menu, Pos.TOP_RIGHT);
         // set the size to preferred size otherwise stack pane will stretch it
         menu.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        StackPane.setMargin(menu, new Insets(15,15,0,0));
+        StackPane.setMargin(menu, new Insets(15, 15, 0, 0));
         menu.setOpacity(0.10);
-        menu.setPadding(new Insets(20,20,20,20));
+        menu.setPadding(new Insets(20, 20, 20, 20));
         menu.setOnMouseEntered(e -> {
             menu.setOpacity(1);
         });
-        menu.setOnMouseExited(e->{
+        menu.setOnMouseExited(e -> {
             menu.setOpacity(0.1);
         });
 
@@ -82,6 +81,7 @@ public class VisualizationView extends StackPane implements Animatable {
 
 
     }
+
     public void initializeBars() {
         Pane root = new Pane();
         if (bars != null) {
@@ -91,6 +91,7 @@ public class VisualizationView extends StackPane implements Animatable {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double height = bounds.getHeight();
         double width = bounds.getWidth();
+        gap = Math.min(200.0/ normalizedNums.length , 4 ) ;
         double barWidth = (width / normalizedNums.length) - gap;
         double heightFactor = height - 2 * padding;
         for (int i = 0; i < normalizedNums.length; i++) {
@@ -98,7 +99,7 @@ public class VisualizationView extends StackPane implements Animatable {
             Rectangle bar = new Rectangle();
             bar.setX(i * (barWidth + gap) + gap / 2.0);
             bar.setWidth(barWidth);
-            bar.setY(height - barHeight - padding);
+            bar.setY(height - barHeight);
             bar.setHeight(barHeight);
             bar.setArcWidth(12);
             bar.setArcHeight(12);
@@ -106,7 +107,7 @@ public class VisualizationView extends StackPane implements Animatable {
             root.getChildren().add(bar);
             bars[i] = bar;
         }
-        this.getChildren().add(root) ;
+        this.getChildren().add(root);
     }
 
     public void resetView() {
@@ -115,20 +116,20 @@ public class VisualizationView extends StackPane implements Animatable {
         }
     }
 
-    // this menu will allow user to change speed / pause or (reset) visualization
+    // this menu will allow user to change speed / pause or (reset- future feature) visualization
     private void menuBox() {
-        menu = new VBox(10) ;
+        menu = new VBox(10);
         Label algorithmName = new Label();
         algorithmName.setText("Coming soon");
-        HBox buttons = new HBox(12) ;
-        Button speedUp = new Button() ;
+        HBox buttons = new HBox(12);
+        Button speedUp = new Button();
         speedUp.setText("⏩");
-        Button speedDown = new Button() ;
-        speedDown.setText("⏪")  ;
-        Button pauseStart = new Button() ;
+        Button speedDown = new Button();
+        speedDown.setText("⏪");
+        Button pauseStart = new Button();
         pauseStart.setText("⏸");
-        buttons.getChildren().addAll(speedDown,speedUp,pauseStart) ;
-        menu.getChildren().addAll(algorithmName,buttons) ;
+        buttons.getChildren().addAll(speedDown, speedUp, pauseStart);
+        menu.getChildren().addAll(algorithmName, buttons);
         // Style label
         algorithmName.setStyle("""
                 -fx-font-family: 'Arial Narrow';
@@ -154,17 +155,17 @@ public class VisualizationView extends StackPane implements Animatable {
                 -fx-text-fill: White;
                 -fx-background-radius: 10px;
                 """);
-        speedUp.setOnAction(e ->{
-            if (animationDuration > 10 ) {
-                animationDuration /= 2 ;
+        speedUp.setOnAction(e -> {
+            if (animationDuration > 10) {
+                animationDuration /= 2;
             }
         });
-        speedDown.setOnAction(e->{
+        speedDown.setOnAction(e -> {
             if (animationDuration < 1000) {
                 switch (animationDuration) {
-                    case 200 -> animationDuration = 400 ;
-                    case 400 -> animationDuration = 800 ;
-                    case 800 -> animationDuration = 1000 ;
+                    case 200 -> animationDuration = 400;
+                    case 400 -> animationDuration = 800;
+                    case 800 -> animationDuration = 1000;
                 }
             }
         });
@@ -173,8 +174,7 @@ public class VisualizationView extends StackPane implements Animatable {
             if (currentAnimation.getStatus() == Animation.Status.RUNNING) {
                 pause();
                 pauseStart.setText("▶");
-            }
-            else {
+            } else {
                 play();
                 pauseStart.setText("⏸");
             }
@@ -182,7 +182,7 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
 
-    public void onComparison(ComparisonEvent event , AnimationCallback onFinish) {
+    public void onComparison(ComparisonEvent event, AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
 
@@ -203,7 +203,7 @@ public class VisualizationView extends StackPane implements Animatable {
         tl1.play();
     }
 
-    public void onInterchange(SwapEvent event ,AnimationCallback onFinish) {
+    public void onInterchange(SwapEvent event, AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
 
@@ -230,7 +230,7 @@ public class VisualizationView extends StackPane implements Animatable {
         tl1.play();
     }
 
-    public void onSet(SetEvent event , AnimationCallback onFinish) {
+    public void onSet(SetEvent event, AnimationCallback onFinish) {
         int index = event.index();
         double val = event.val();
         double normalizedVal = val / arrayMax;
@@ -246,40 +246,77 @@ public class VisualizationView extends StackPane implements Animatable {
         KeyValue kvColor = new KeyValue(bars[index].fillProperty(), Color.LIME);
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), kvh, kvy, kvColor));
         tl.setOnFinished(e -> {
-            bars[index].setFill(BAR_COLOR) ;
+            bars[index].setFill(BAR_COLOR);
             onFinish.run();
         });
         currentAnimation = tl;
         tl.play();
     }
-    /**
-     * Plays a list of SortingEvents sequentially with proper animation timing.
-     */
-//    public void playEvents(List<SortingEvent> events) {
-//        playEventAt(events, 0);
-//    }
-//
-//    private void playEventAt(List<SortingEvent> events, int index) {
-//        if (index >= events.size()) return;
-//
-//        SortingEvent event = events.get(index);
-//        Timeline tl = switch (event) {
-//            case ComparisonEvent ce -> onComparison(ce);
-//            case SwapEvent se -> onInterchange(se);
-//            case SetEvent se -> onSet(se);
-//            case DivideEvent de -> null;
-//        };
-//        if (tl != null) {
-//            var original = tl.getOnFinished();
-//            tl.setOnFinished(e -> {
-//                if (original != null) original.handle(e);
-//                playEventAt(events, index + 1);
-//            });
-//            tl.play();
-//        } else {
-//            playEventAt(events, index + 1);
-//        }
-//    }
+
+    public void onDivide(DivideEvent event, AnimationCallback onFinish) {
+        int left = event.index2() ;
+        int right = event.index3() ;
+        Timeline tl = new Timeline();
+        int timeShift = 0 ;
+        for (int i = left ; i < event.index() ; i++) {
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration ), kv);
+            tl.getKeyFrames().add(frame) ;
+        }
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD))) ;
+        for (int i = event.index()+1 ; i <= right ; i++) {
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration), kv);
+            tl.getKeyFrames().add(frame) ;
+        }
+        tl.setOnFinished(e -> {
+            for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
+            onFinish.run();
+        });
+
+        currentAnimation = tl;
+        tl.play();
+    }
+
+    public void onMerge(MergeEvent event, AnimationCallback onFinish) {
+        int index1 = event.index1();
+        int index2 = event.index2();
+        int timeShift = 0 ;
+        Timeline tl = new Timeline();
+        for (int i = index1; i <= index2; i++) {
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#FF6F61"));
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration), kv);
+            tl.getKeyFrames().add(frame) ;
+
+        }
+
+        tl.setOnFinished(e -> {
+            for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
+            onFinish.run();
+        });
+
+        currentAnimation = tl;
+        tl.play();
+
+    }
+
+    public void onSort(SortedEvent event, AnimationCallback onFinish) {
+        int timeShift = 0 ;
+        Timeline tl = new Timeline();
+        for (Rectangle bar : bars) {
+            KeyValue kv = new KeyValue(bar.fillProperty(), Color.GREEN);
+            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++*animationDuration), kv);
+            tl.getKeyFrames().add(frame) ;
+        }
+
+        tl.setOnFinished(e -> {
+            onFinish.run();
+        });
+
+        currentAnimation = tl;
+        tl.play();
+    }
+
 
     public int getAnimationDuration() {
         return animationDuration;
@@ -290,16 +327,40 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     // Create simple alert for visualization info
-    public void finishAlert(String algoName , int interchangeCount , int ComparisonCount , SessionCallback onSessionFinish) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION) ;
+    public void finishAlert(String algoName, int interchangeCount, int ComparisonCount, SessionCallback onSessionFinish) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Visualization Statistics");
         alert.setHeaderText("Sorting completed");
-        alert.setContentText("Algorithm Name : "+algoName + "\nComparison Count : "+ComparisonCount +"\nInterchange Count : "+interchangeCount);
-        alert.setOnHidden( e -> {
+        alert.setContentText("Algorithm Name : " + algoName + "\nComparison Count : " + ComparisonCount + "\nInterchange Count : " + interchangeCount);
+        alert.setOnHidden(e -> {
             // call manager to proceed with other arrays,algorithms,etc
             onSessionFinish.onFinish();
         });
         alert.show();
+
+    }
+
+    //TODO style the pop-up
+    public void finishPopUp(String algoName, int interchangeCount, int ComparisonCount, SessionCallback onSessionFinish){
+        Stage popup = new Stage() ;
+        popup.setTitle("Visualization Statistics");
+        popup.initOwner(this.getScene().getWindow());
+        popup.initModality(Modality.APPLICATION_MODAL);
+        Label header = new Label("Visualization Completed") ;
+        Label Content = new Label("Algorithm Name : " + algoName + "\nComparison Count : " + ComparisonCount + "\nInterchange Count : " + interchangeCount) ;
+        Button closePopUp = new Button("Next") ;
+        closePopUp.setOnAction(e->{
+            popup.close();
+        });
+        VBox layoutBox = new VBox(10 , header , Content , closePopUp) ;
+        layoutBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(layoutBox,400,200) ;
+        popup.setOnHidden(e->{
+            onSessionFinish.onFinish();
+        });
+        popup.setScene(scene);
+        popup.show();
+
     }
 
     @Override

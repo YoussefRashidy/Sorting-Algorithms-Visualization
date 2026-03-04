@@ -47,7 +47,7 @@ public class MainGUI extends Application {
     Stage primaryStage ;
 
     // Cache scenes for later use
-    InputScene inputScene = new InputScene("Visualization") ;
+    InputScene inputScene = new InputScene("Visualization Mode") ;
     VisualizationView view = new VisualizationView() ;
     ComparisonView comparisonView = new ComparisonView() ;
     StackPane mainView  ;
@@ -271,6 +271,7 @@ public class MainGUI extends Application {
     }
 
     public void loadMainView(){
+        mainView.setOpacity(1);
         primaryStage.getScene().setRoot(mainView);
         play();
     }

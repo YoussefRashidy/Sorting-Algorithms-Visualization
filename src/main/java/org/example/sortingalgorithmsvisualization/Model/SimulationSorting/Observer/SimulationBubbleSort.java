@@ -25,6 +25,7 @@ public class SimulationBubbleSort extends AbstractSimulationSorting {
             }
             if (!swap) break;
         }
+        sortNotification();
         return array;
     }
 }

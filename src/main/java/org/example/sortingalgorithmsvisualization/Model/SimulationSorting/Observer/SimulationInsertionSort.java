@@ -20,6 +20,7 @@ public class SimulationInsertionSort extends AbstractSimulationSorting{
             array[j+1] = key ;
 //            setNotification(j+1, key);
         }
+        sortNotification();
         return array;
     }
 }

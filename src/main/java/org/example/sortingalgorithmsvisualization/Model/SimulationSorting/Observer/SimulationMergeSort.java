@@ -6,6 +6,7 @@ public class SimulationMergeSort extends AbstractSimulationSorting{
     @Override
     public int[] sort(int[] array) {
         mergeSort(array, 0, array.length-1);
+        sortNotification();
         return array;
     }
 
@@ -13,11 +14,10 @@ public class SimulationMergeSort extends AbstractSimulationSorting{
         if (left >= right) return ;
         int q = (left+right) / 2 ;
         // Record divide
-        divideNotification(q);
+        divideNotification(q,left,right);
         mergeSort(array, left, q);
         mergeSort(array, q+1, right);
         merge(array, left, q, right);
-
     }
 
     private void merge(int[] array , int left , int q , int right) {
@@ -53,6 +53,7 @@ public class SimulationMergeSort extends AbstractSimulationSorting{
             array[left+i+j] = rightArray[j] ;
             j++ ;
         }
-
+        mergeNotification(left, right);
     }
+
 }
