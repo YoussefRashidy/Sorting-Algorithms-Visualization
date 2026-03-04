@@ -234,8 +234,6 @@ public class ComparisonView extends VBox {
                 throw new RuntimeException(e);
             }
         }
-
-
     }
 
 
