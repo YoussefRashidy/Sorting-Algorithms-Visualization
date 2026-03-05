@@ -360,7 +360,7 @@ public class InputScene extends StackPane implements Animatable {
             data.generationMods = generationMode.toArray(new ArrayType[0]);
         } else {
             data.autoGeneration = false;
-            data.files = (ArrayList<File>) this.files;
+            data.files = new ArrayList<>(this.files);
         }
         for (CheckBox box : checkBoxes) {
             if (box.isSelected()) data.algorithms.add(box.getText());
