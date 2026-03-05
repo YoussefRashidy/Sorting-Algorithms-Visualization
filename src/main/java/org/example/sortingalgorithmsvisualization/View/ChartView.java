@@ -27,7 +27,7 @@ public class ChartView {
         xAxis.setLabel("Array Size");
         yAxis.setLabel(metricLabel);
         lineChart = new LineChart<>(xAxis, yAxis);
-        String[] algos = {"Merge Sort","Bubble Sort","Insertion Sort","Selection Sort","Heap Sort"} ;
+        String[] algos = {"Merge Sort","Bubble Sort","Insertion Sort","Selection Sort","Heap Sort","Quick Sort"} ;
         Arrays.stream(algos).forEach(algo -> plotMetric(algo, metricLabel, generationMode));
     }
     public void plotMetric(String Algorithm,String metricLabel,String generationMode) {

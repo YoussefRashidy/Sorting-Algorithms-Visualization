@@ -182,15 +182,15 @@ public class MainGUI extends Application {
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        Label cta = new Label(buttonText);
-        cta.setFont(Font.font("Courier New", FontWeight.BOLD, 13));
-        cta.setTextFill(TEXT_MAIN);
-        cta.setPadding(new Insets(6, 14, 6, 14));
-        cta.setBackground(new Background(new BackgroundFill(
+        Label buttonLike = new Label(buttonText);
+        buttonLike.setFont(Font.font("Courier New", FontWeight.BOLD, 13));
+        buttonLike.setTextFill(TEXT_MAIN);
+        buttonLike.setPadding(new Insets(6, 14, 6, 14));
+        buttonLike.setBackground(new Background(new BackgroundFill(
                 accent.deriveColor(0, 1, 1, 0.2),
                 new CornerRadii(6), Insets.EMPTY)));
 
-        VBox content = new VBox(14, nameLabel, descLabel, spacer, cta);
+        VBox content = new VBox(14, nameLabel, descLabel, spacer, buttonLike);
         content.setBackground(new Background(new BackgroundFill(BG_BOTTOM,CornerRadii.EMPTY,Insets.EMPTY)));
         content.setBorder(new Border(new BorderStroke(accent,BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(4, 0, 0, 0))));
         content.setPadding(new Insets(24, 24, 20, 24));
@@ -243,6 +243,7 @@ public class MainGUI extends Application {
             fadeOut.setOnFinished(event -> {
                 inputScene.setMode(modeText);
                 primaryStage.getScene().setRoot(inputScene);
+                inputScene.play();
                 // Fade in new scene
                 FadeTransition fadeIn = new FadeTransition(Duration.millis(400), inputScene);
                 fadeIn.setFromValue(0.0);
@@ -278,6 +279,9 @@ public class MainGUI extends Application {
 
     public void loadComparisonView(){
         inputScene.pause();
+        comparisonView.setMainView(this);
+        // null state table to avoid keeping old results
+        comparisonView.setStatTable(null);
         comparisonView.buildView();
         primaryStage.getScene().setRoot(comparisonView);
     }

@@ -9,4 +9,5 @@ public interface Observable {
     public void setNotification(int index , int val) ;
     public void sortNotification() ;
     public void mergeNotification(int index1 , int index2);
+    public void partitionNotification(int index1 , int left , int right) ;
 }

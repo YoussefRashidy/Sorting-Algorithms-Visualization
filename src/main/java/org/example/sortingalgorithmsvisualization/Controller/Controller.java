@@ -120,6 +120,7 @@ public class Controller {
                 case "Insertion Sort" -> new SimulationInsertionSort() ;
                 case "Selection Sort" -> new SimulationSelectionSort() ;
                 case "Heap Sort" -> new SimulationHeapSort() ;
+                case "Quick Sort" -> new SimulationQuickSort() ;
                 default -> throw new IllegalArgumentException("Invalid sorting algorithm") ;
             }) ;
         }
@@ -132,7 +133,7 @@ public class Controller {
         autoData.arraySizes = new ArrayList<>(List.of(100,500,1000,2500,5000,10000)) ;
         autoData.autoGeneration = true ;
         autoData.generationMods = new ArrayType[]{ArrayType.RANDOM, ArrayType.SORTED, ArrayType.INVERSELY_SORTED, ArrayType.NEARLY_SORTED};
-        autoData.algorithms = new ArrayList<>(List.of("Merge Sort","Bubble Sort","Insertion Sort","Selection Sort","Heap Sort")) ;
+        autoData.algorithms = new ArrayList<>(List.of("Merge Sort","Bubble Sort","Insertion Sort","Selection Sort","Heap Sort","Quick Sort")) ;
         autoData.maxValue = 100000 ;
         return autoData ;
     }

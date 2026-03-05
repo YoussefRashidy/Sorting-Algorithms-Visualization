@@ -1,17 +1,18 @@
 package org.example.sortingalgorithmsvisualization.Model.Observers;
 
-public class OperationsCounter implements Observer{
-    private int swap ;
-    private int comparison ;
-    private int set ;
+public class OperationsCounter implements Observer {
+    private int swap;
+    private int comparison;
+    private int set;
+
     @Override
     public void swap(int index1, int index2) {
-        swap+= 1 ;
+        swap += 1;
     }
 
     @Override
     public void compare(int index1, int index2) {
-        comparison+=1 ;
+        comparison += 1;
     }
 
     @Override
@@ -35,6 +36,12 @@ public class OperationsCounter implements Observer{
     public void divide(int index, int index2, int index3) {
         // NO-OP
     }
+
+    @Override
+    public void partition(int index, int left, int right) {
+        // NO_OP
+    }
+
 
     public int getSwap() {
         return swap;

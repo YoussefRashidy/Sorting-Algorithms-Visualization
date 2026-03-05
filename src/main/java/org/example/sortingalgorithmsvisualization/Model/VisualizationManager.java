@@ -75,6 +75,7 @@ public class VisualizationManager {
                 case MergeEvent me -> visualizationView.onMerge(me,onFinish);
                 case DivideEvent dv -> visualizationView.onDivide(dv, onFinish);
                 case SortedEvent so -> visualizationView.onSort(so, onFinish);
+                case PartitionEvent pa -> visualizationView.onPartition(pa, onFinish);
 //                case ComparisonEvent cp -> visualizationView.onComparison(cp);
                 default -> throw new IllegalArgumentException("Unsupported event") ;
             }

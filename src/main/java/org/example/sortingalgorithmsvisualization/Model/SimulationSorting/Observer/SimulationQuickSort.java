@@ -1,18 +1,20 @@
-package org.example.sortingalgorithmsvisualization.Model.PureSorting;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
 
 import java.util.Random;
 
-public class QuickSort implements SortingStrategy {
-    private Random rng = new Random();
+public class SimulationQuickSort extends AbstractSimulationSorting{
+    private static final Random rng = new Random();
     @Override
     public int[] sort(int[] array) {
         quickSort(array, 0, array.length-1);
+        sortNotification();
         return array ;
     }
 
     private void quickSort(int[] array, int left, int right) {
         if (left < right) {
             int q = randomizedPartition(array, left, right);
+            partitionNotification(q,left,right);
             quickSort(array, left, q - 1);
             quickSort(array, q + 1, right);
         }
@@ -23,6 +25,7 @@ public class QuickSort implements SortingStrategy {
         int temp = array[right];
         array[right] = array[index];
         array[index] = temp;
+        swapNotification(right, index);
         return partition(array, left, right);
     }
 
@@ -30,16 +33,19 @@ public class QuickSort implements SortingStrategy {
         int pivot = array[right];
         int index = left - 1;
         for (int i = left; i < right; i++) {
+            comparisonNotification(i,right);
             if (array[i] <= pivot) {
                 index++;
                 int temp = array[index];
                 array[index] = array[i];
                 array[i] = temp;
+                swapNotification(index, i);
             }
         }
         int temp = array[index + 1];
         array[index+1] = array[right];
         array[right] = temp;
+        swapNotification(index+1, right);
         return index + 1;
     }
 }

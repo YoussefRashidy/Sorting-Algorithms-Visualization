@@ -24,16 +24,19 @@ import org.example.sortingalgorithmsvisualization.Model.ComparisonStat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 //TODO implement return to main menu button
 //TODO Style the tool box and button
-public class ComparisonView extends VBox {
+public class ComparisonView extends VBox implements Animatable {
     private LinkedHashMap<ComparisonArray, List<ComparisonStat>> statTable;
     private TableView<ComparisonStat> table;
     private HBox toolBar = new HBox(10);
+    private MainGUI mainView ;
+    private ArrayList<Timeline> animationList = new ArrayList<>() ;
 
     public LinkedHashMap<ComparisonArray, List<ComparisonStat>> getStatTable() {
         return statTable;
@@ -109,6 +112,7 @@ public class ComparisonView extends VBox {
 
     public void buildView() {
         this.getChildren().clear();
+        toolBar.getChildren().clear();
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         // TODO fix placeholder issue
         if (statTable == null || statTable.isEmpty()) {
@@ -134,21 +138,29 @@ public class ComparisonView extends VBox {
             tl.play();
             placeHolder.setStyle("""
                     -fx-text-fill: #0ea5e9;
-                    -fx-font: 'Segoe UI';
+                    -fx-font-family: 'Segoe UI';
                     -fx-font-size: 30px;
                     -fx-text-alignment: Center;
                     """);
+            // FIX ANIMATION LEAKING
+            animationList.add(tl) ;
             table.setPlaceholder(loadingBox);
             this.getChildren().addAll(table);
             this.setAlignment(Pos.CENTER);
             table.refresh();
         } else {
             buildTable();
+            this.stop();
             Button exportButton = new Button("⬇ Export CSV");
             exportButton.setOnAction(e -> {
                 saveCSV();
             });
-            toolBar.getChildren().add(exportButton);
+            Button toMianMenuButton = new Button("To Main Menu") ;
+            toMianMenuButton.setOnAction(e->{
+                this.getChildren().clear();
+                mainView.loadMainView();
+            });
+            toolBar.getChildren().addAll(exportButton,toMianMenuButton);
             toolBar.setAlignment(Pos.CENTER_LEFT);
             toolBar.setPadding(new Insets(10, 20, 10, 20));
             toolBar.setStyle("""
@@ -167,6 +179,7 @@ public class ComparisonView extends VBox {
                         -fx-cursor: hand;
                         -fx-effect: dropshadow(gaussian, rgba(56,189,248,0.4), 8, 0.3, 0, 2);
                     """);
+            toMianMenuButton.setStyle(exportButton.getStyle());
             this.getChildren().addAll(toolBar, table);
             this.setSpacing(20);
             Platform.runLater(() -> {
@@ -236,5 +249,28 @@ public class ComparisonView extends VBox {
         }
     }
 
+    public MainGUI getMainView() {
+        return mainView;
+    }
 
+    public void setMainView(MainGUI mainView) {
+        this.mainView = mainView;
+    }
+
+    @Override
+    public void play() {
+        animationList.forEach(tl -> tl.play());
+    }
+
+    @Override
+    public void pause() {
+        animationList.forEach(tl -> tl.pause());
+
+    }
+
+    @Override
+    public void stop() {
+        animationList.forEach(tl -> tl.stop());
+        animationList.clear();
+    }
 }

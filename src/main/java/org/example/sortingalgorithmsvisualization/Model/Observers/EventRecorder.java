@@ -43,6 +43,12 @@ public class EventRecorder implements Observer{
         eventList.add(event) ;
     }
 
+    @Override
+    public void partition(int index , int left , int right) {
+        PartitionEvent event = new PartitionEvent(index,left,right) ;
+        eventList.add(event) ;
+    }
+
     public List<SortingEvent> getEventList() {
         return eventList;
     }

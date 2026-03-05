@@ -7,4 +7,5 @@ public interface Observer {
     public void merge(int index1 ,int index2) ;
     public void sortEvent();
     public void divide(int index,int index2 , int index3) ;
+    public void partition(int index , int left , int right) ;
 }

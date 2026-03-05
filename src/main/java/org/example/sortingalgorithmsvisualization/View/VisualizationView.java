@@ -84,9 +84,7 @@ public class VisualizationView extends StackPane implements Animatable {
 
     public void initializeBars() {
         Pane root = new Pane();
-        if (bars != null) {
-            this.getChildren().clear();
-        }
+        resetView();
         bars = new Rectangle[normalizedNums.length];
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double height = bounds.getHeight();
@@ -113,7 +111,9 @@ public class VisualizationView extends StackPane implements Animatable {
     public void resetView() {
         if (bars != null) {
             this.getChildren().clear();
+            animationDuration = 200 ;
         }
+
     }
 
     // this menu will allow user to change speed / pause or (reset- future feature) visualization
@@ -202,7 +202,7 @@ public class VisualizationView extends StackPane implements Animatable {
                     case 400 -> animationDuration = 800;
                     case 800 -> animationDuration = 1000;
                 }
-                speedLabel.setText("Speed: 0." + (200 / animationDuration * 10) + "x") ;
+                speedLabel.setText("Speed: 0." + (200.0 / animationDuration * 10) + "x") ;
             }
         });
 
@@ -278,7 +278,7 @@ public class VisualizationView extends StackPane implements Animatable {
 
         Timeline tl = new Timeline();
         KeyValue kvh = new KeyValue(bars[index].heightProperty(), newBarHeight, Interpolator.EASE_BOTH);
-        KeyValue kvy = new KeyValue(bars[index].yProperty(), height - newBarHeight - padding, Interpolator.EASE_BOTH);
+        KeyValue kvy = new KeyValue(bars[index].yProperty(), height - newBarHeight, Interpolator.EASE_BOTH);
         KeyValue kvColor = new KeyValue(bars[index].fillProperty(), Color.LIME);
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), kvh, kvy, kvColor));
         tl.setOnFinished(e -> {
@@ -296,13 +296,15 @@ public class VisualizationView extends StackPane implements Animatable {
         int timeShift = 0;
         for (int i = left; i < event.index(); i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD)));
         for (int i = event.index() + 1; i <= right; i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
         tl.setOnFinished(e -> {
@@ -320,8 +322,9 @@ public class VisualizationView extends StackPane implements Animatable {
         int timeShift = 0;
         Timeline tl = new Timeline();
         for (int i = index1; i <= index2; i++) {
-            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#FF6F61"));
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
 
         }
@@ -336,12 +339,40 @@ public class VisualizationView extends StackPane implements Animatable {
 
     }
 
+    public void onPartition(PartitionEvent event, AnimationCallback onFinish) {
+        int left = event.left();
+        int right = event.right();
+        Timeline tl = new Timeline();
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD)));
+        int timeShift = 0;
+        for (int i = left; i < event.index(); i++) {
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
+            tl.getKeyFrames().add(frame);
+        }
+        for (int i = event.index() + 1; i <= right; i++) {
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
+            tl.getKeyFrames().add(frame);
+        }
+        tl.setOnFinished(e -> {
+            for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
+            onFinish.run();
+        });
+
+        currentAnimation = tl;
+        tl.play();
+    }
+
     public void onSort(SortedEvent event, AnimationCallback onFinish) {
         int timeShift = 0;
         Timeline tl = new Timeline();
         for (Rectangle bar : bars) {
             KeyValue kv = new KeyValue(bar.fillProperty(), Color.GREEN);
-            KeyFrame frame = new KeyFrame(Duration.millis(animationDuration + timeShift++ * animationDuration), kv);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
 
