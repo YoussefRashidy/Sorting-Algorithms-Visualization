@@ -8,4 +8,6 @@ public interface Observer {
     public void sortEvent();
     public void divide(int index,int index2 , int index3) ;
     public void partition(int index , int left , int right) ;
+    public void mergeComparison(int val1 , int val2 ,int index1 ,int index2 , int setIndex) ;
+
 }

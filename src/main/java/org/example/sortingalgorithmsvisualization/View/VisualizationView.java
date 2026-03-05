@@ -111,7 +111,7 @@ public class VisualizationView extends StackPane implements Animatable {
     public void resetView() {
         if (bars != null) {
             this.getChildren().clear();
-            animationDuration = 200 ;
+            animationDuration = 200;
         }
 
     }
@@ -131,7 +131,7 @@ public class VisualizationView extends StackPane implements Animatable {
         pauseStart.setText("⏸");
         Label speedLabel = new Label("Speed: 1x");
         buttons.getChildren().addAll(speedDown, speedUp, pauseStart);
-        menu.getChildren().addAll(algorithmName,controls, buttons , speedLabel);
+        menu.getChildren().addAll(algorithmName, controls, buttons, speedLabel);
         // Style label
         algorithmName.setStyle("""
                     -fx-font-size: 16px;
@@ -192,7 +192,7 @@ public class VisualizationView extends StackPane implements Animatable {
         speedUp.setOnAction(e -> {
             if (animationDuration > 10) {
                 animationDuration /= 2;
-                speedLabel.setText("Speed: " + (200 / animationDuration) + "x") ;
+                speedLabel.setText("Speed: " + (200 / animationDuration) + "x");
             }
         });
         speedDown.setOnAction(e -> {
@@ -202,7 +202,7 @@ public class VisualizationView extends StackPane implements Animatable {
                     case 400 -> animationDuration = 800;
                     case 800 -> animationDuration = 1000;
                 }
-                speedLabel.setText("Speed: 0." + (200.0 / animationDuration * 10) + "x") ;
+                speedLabel.setText("Speed: 0." + (200.0 / animationDuration * 10) + "x");
             }
         });
 
@@ -338,6 +338,14 @@ public class VisualizationView extends StackPane implements Animatable {
         tl.play();
 
     }
+
+    public void onMergeComparison(MergeComparisonEvent event, AnimationCallback onFinish) {
+        // Currently not implemented
+        Timeline tl = new Timeline() ;
+        tl.setOnFinished(e -> onFinish.run());
+        tl.play();
+    }
+
 
     public void onPartition(PartitionEvent event, AnimationCallback onFinish) {
         int left = event.left();

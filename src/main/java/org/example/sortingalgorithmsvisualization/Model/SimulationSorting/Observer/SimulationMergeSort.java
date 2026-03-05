@@ -27,7 +27,7 @@ public class SimulationMergeSort extends AbstractSimulationSorting{
         i = j = 0 ;
         while (i < leftArray.length && j < rightArray.length) {
             // Record Comparison (solve comparison problem)
-            comparisonNotification(left+i , q+j+1);
+            mergeComparisonNotification(leftArray[i],rightArray[j], left+i ,q+j+1,left+i+j);
             if (leftArray[i] <= rightArray[j]) {
                 //Record set (here it is considered swap)
                 setNotification(left+i+j, leftArray[i]);

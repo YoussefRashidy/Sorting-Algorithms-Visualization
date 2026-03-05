@@ -42,6 +42,11 @@ public class OperationsCounter implements Observer {
         // NO_OP
     }
 
+    @Override
+    public void mergeComparison(int val1, int val2, int index1, int index2, int setIndex) {
+        comparison+=1;
+    }
+
 
     public int getSwap() {
         return swap;

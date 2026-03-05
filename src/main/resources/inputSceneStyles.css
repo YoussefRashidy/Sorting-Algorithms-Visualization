@@ -1,14 +1,8 @@
-/* ============================================================
-   main-scene.css — Styles for the animated-background scene
-   ============================================================ */
-
-/* ── root / global ──────────────────────────────────────────── */
 .root {
     -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size:   13px;
 }
 
-/* ── scrollpane wrapper (invisible chrome) ──────────────────── */
 .form-scroll {
     -fx-background-color: transparent;
     -fx-background:       transparent;
@@ -17,28 +11,7 @@
     -fx-background-color: transparent;
 }
 
-/* ── glass-effect form pane ─────────────────────────────────── */
-.input-form-pane {
-    -fx-background-color: rgba(20, 20, 40, 0.78);
-    -fx-background-radius: 16;
-    -fx-border-color:  rgba(255, 255, 255, 0.10);
-    -fx-border-width:  1;
-    -fx-border-radius: 16;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 30, 0.1, 0, 6);
-}
 
-/* ── form title / subtitle ──────────────────────────────────── */
-.form-title {
-    -fx-font-size:   22px;
-    -fx-font-weight: bold;
-    -fx-text-fill:   #e0e0ff;
-}
-.form-subtitle {
-    -fx-font-size:  13px;
-    -fx-text-fill:  rgba(200, 200, 230, 0.70);
-}
-
-/* ── section headings ───────────────────────────────────────── */
 .section-label {
     -fx-font-size:   14px;
     -fx-font-weight: bold;
@@ -49,14 +22,11 @@
     -fx-text-fill: #ccccdd;
     -fx-font-size: 12px;
 }
-
-/* ── separators ─────────────────────────────────────────────── */
 .separator .line {
     -fx-border-color: rgba(255, 255, 255, 0.08);
     -fx-border-width: 0 0 1 0;
 }
 
-/* ── text fields ────────────────────────────────────────────── */
 .text-field {
     -fx-background-color: rgba(255, 255, 255, 0.08);
     -fx-background-radius: 6;
@@ -71,7 +41,6 @@
     -fx-background-color: rgba(255, 255, 255, 0.12);
 }
 
-/* ── combo box ──────────────────────────────────────────────── */
 .combo-box {
     -fx-background-color: rgba(255, 255, 255, 0.08);
     -fx-background-radius: 6;
@@ -94,7 +63,6 @@
     -fx-background-color: rgba(80, 120, 255, 0.30);
 }
 
-/* ── radio buttons & checkboxes ─────────────────────────────── */
 .radio-button,
 .check-box {
     -fx-text-fill: #c8c8e0;
@@ -111,14 +79,12 @@
     -fx-background-color: #6a9cff;
 }
 
-/* ── file label ─────────────────────────────────────────────── */
 .file-label {
     -fx-text-fill: rgba(180, 180, 200, 0.60);
     -fx-font-style: italic;
     -fx-font-size: 12px;
 }
 
-/* ── slider ─────────────────────────────────────────────────── */
 .slider .track {
     -fx-background-color: rgba(255, 255, 255, 0.12);
     -fx-background-radius: 4;
@@ -133,20 +99,6 @@
 .slider .axis .tick-label {
     -fx-text-fill: rgba(200, 200, 220, 0.55);
     -fx-font-size: 10px;
-}
-
-/* ── buttons ────────────────────────────────────────────────── */
-.button {
-    -fx-text-fill: #ffffff;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-padding: 8 20;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.btn-start {
-    -fx-background-color: linear-gradient(to right, #4a7cff, #6a5aff);
 }
 .btn-start:hover {
     -fx-background-color: linear-gradient(to right, #5d8fff, #816eff);
@@ -166,13 +118,11 @@
     -fx-background-color: rgba(255, 255, 255, 0.06);
 }
 
-/* ── choose-file button ─────────────────────────────────────── */
 .button:default {
     -fx-background-color: rgba(255, 255, 255, 0.10);
     -fx-border-color:  rgba(255, 255, 255, 0.20);
 }
 
-/* ── scrollbar overrides (keep dark) ────────────────────────── */
 .scroll-bar {
     -fx-background-color: transparent;
 }

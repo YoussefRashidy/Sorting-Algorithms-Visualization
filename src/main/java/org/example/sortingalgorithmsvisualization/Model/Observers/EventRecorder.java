@@ -49,6 +49,12 @@ public class EventRecorder implements Observer{
         eventList.add(event) ;
     }
 
+    @Override
+    public void mergeComparison(int val1, int val2, int index1, int index2, int setIndex) {
+        MergeComparisonEvent event = new MergeComparisonEvent(val1, val2, index1, index2, setIndex) ;
+        eventList.add(event) ;
+    }
+
     public List<SortingEvent> getEventList() {
         return eventList;
     }

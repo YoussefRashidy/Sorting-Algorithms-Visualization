@@ -68,7 +68,7 @@ public class MainGUI extends Application {
         mainView.getChildren().addAll(bars, box);
         mainView.setBackground(new Background(new BackgroundFill(BG_TOP,null,null)));
         Scene scene = new Scene(mainView, Color.web("#121212"));
-        scene.getStylesheets().add(getClass().getResource("/main-scene.css").toExternalForm()) ;
+        scene.getStylesheets().add(getClass().getResource("/inputSceneStyles.css").toExternalForm()) ;
         stage.setScene(scene);
         stage.setWidth(bounds.getWidth());
         stage.setHeight(bounds.getHeight());

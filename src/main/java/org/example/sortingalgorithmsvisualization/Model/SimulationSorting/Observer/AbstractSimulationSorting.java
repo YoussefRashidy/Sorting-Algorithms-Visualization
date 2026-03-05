@@ -56,4 +56,9 @@ abstract public class AbstractSimulationSorting implements Observable, SortingSt
     public void partitionNotification(int index,int left , int right){
         for (Observer observer : observers) observer.partition(index , left ,right);
     }
+
+    @Override
+    public void mergeComparisonNotification(int val1, int val2, int index1, int index2, int setIndex) {
+        for (Observer observer : observers) observer.mergeComparison(val1, val2, index1, index2, setIndex);
+    }
 }
