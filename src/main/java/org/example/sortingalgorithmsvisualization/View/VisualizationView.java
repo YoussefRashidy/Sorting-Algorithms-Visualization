@@ -36,7 +36,7 @@ public class VisualizationView extends StackPane implements Animatable {
     private static final Color BAR_COLOR = Color.web("#38bdf8");// soft cyan
     private static final Color comparisonColor = Color.RED;
     private static final Color swapColor = Color.YELLOW;
-    private int animationDuration = 200;
+    private double animationDuration = 250;
     private int arrayMax;
     private Timeline currentAnimation;
     private VBox menu;
@@ -193,19 +193,15 @@ public class VisualizationView extends StackPane implements Animatable {
                 """);
 
         speedUp.setOnAction(e -> {
-            if (animationDuration > 10) {
+            if (animationDuration > 5) {
                 animationDuration /= 2;
-                speedLabel.setText("Speed: " + (200 / animationDuration) + "x");
+                speedLabel.setText("Speed: " + (250.0 / animationDuration) + "x");
             }
         });
         speedDown.setOnAction(e -> {
-            if (animationDuration < 1000) {
-                switch (animationDuration) {
-                    case 200 -> animationDuration = 400;
-                    case 400 -> animationDuration = 800;
-                    case 800 -> animationDuration = 1000;
-                }
-                speedLabel.setText("Speed: 0." + (200.0 / animationDuration * 10) + "x");
+            if (animationDuration < 2000) {
+                animationDuration*=2 ;
+                speedLabel.setText("Speed: 0." + (250.0/ animationDuration * 10) + "x");
             }
         });
 
@@ -342,6 +338,10 @@ public class VisualizationView extends StackPane implements Animatable {
 
     }
 
+    private static final Color MERGE_BAR_COLOR    = Color.web("#f59e0b");
+    private static final Color MERGE_WINNER_COLOR = Color.web("#34d399");
+    private static final Color MERGE_LOSER_COLOR  = Color.web("#f87171");
+
     public void onMergeComparison(MergeComparisonEvent event, AnimationCallback onFinish) {
         // Currently not implemented
         Timeline tl = new Timeline();
@@ -367,8 +367,8 @@ public class VisualizationView extends StackPane implements Animatable {
         bar1.setHeight(initialHeight);
         bar1.setArcWidth(12);
         bar1.setArcHeight(12);
-        bar1.setFill(Color.CORNFLOWERBLUE);
-        bar1.setOpacity(0.8);
+        bar1.setFill(MERGE_BAR_COLOR);
+        bar1.setOpacity(0.95);
 
         Rectangle bar2 = new Rectangle();
         double barHeight2 = (double) val2/arrayMax * heightFactor;
@@ -378,8 +378,8 @@ public class VisualizationView extends StackPane implements Animatable {
         bar2.setHeight(initialHeight);
         bar2.setArcWidth(12);
         bar2.setArcHeight(12);
-        bar2.setFill(Color.CORNFLOWERBLUE);
-        bar2.setOpacity(0.8);
+        bar2.setFill(MERGE_BAR_COLOR);
+        bar2.setOpacity(0.95);
 
         KeyValue kvyb1 = new KeyValue(bar1.yProperty(), height-initialHeight) ;
         KeyValue kvyb2 = new KeyValue(bar2.yProperty(), height-initialHeight) ;
@@ -468,11 +468,11 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
 
-    public int getAnimationDuration() {
+    public double getAnimationDuration() {
         return animationDuration;
     }
 
-    public void setAnimationDuration(int animationDuration) {
+    public void setAnimationDuration(double animationDuration) {
         this.animationDuration = animationDuration;
     }
 

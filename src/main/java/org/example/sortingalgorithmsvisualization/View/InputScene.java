@@ -179,14 +179,14 @@ public class InputScene extends StackPane implements Animatable {
 
         // Allow only one max for now consider adding multiple max values
         arrayMaxValue.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("[0-9,]*")) {
+            if (!newVal.matches("[0-9]*")) {
                 arrayMaxValue.setText(newVal.replaceAll("[^0-9]", ""));
-                try {
-                    Integer.parseInt(newVal);
-                } catch (NumberFormatException e) {
-                    // Prevent the max from exceeding the int max value
-                    arrayMaxValue.setText(String.valueOf(Integer.MAX_VALUE));
-                }
+            }
+            try {
+                Integer.parseInt(newVal);
+            } catch (NumberFormatException e) {
+                // Prevent the max from exceeding the int max value
+                arrayMaxValue.setText(String.valueOf(Integer.MAX_VALUE));
             }
         });
 
@@ -254,6 +254,8 @@ public class InputScene extends StackPane implements Animatable {
             inverselySorted.setSelected(false);
             nearlySortedArray.setSelected(false);
             checkBoxes.forEach(cb -> cb.setSelected(false));
+            autoButton.setVisible(mode.equalsIgnoreCase("Comparison Mode"));
+            autoButton.setManaged(mode.equalsIgnoreCase("Comparison Mode"));
             files = null;
         });
 
@@ -262,7 +264,7 @@ public class InputScene extends StackPane implements Animatable {
 
     public void applyStyles() {
         this.setStyle("-fx-background-color: #1a1a2e;");
-        this.getStylesheets().add(getClass().getResource("/inputSceneStyles.css").toExternalForm()) ;
+        this.getStylesheets().add(getClass().getResource("/inputSceneStyles.css").toExternalForm());
 
         mainRoot.setSpacing(18);
         mainRoot.setPadding(new Insets(28, 32, 28, 32));
