@@ -40,6 +40,7 @@ public class VisualizationView extends StackPane implements Animatable {
     private int arrayMax;
     private Timeline currentAnimation;
     private VBox menu;
+    private Pane overlayPane = new Pane( ) ;
 
 
     public double[] getNormalizedNums() {
@@ -58,6 +59,8 @@ public class VisualizationView extends StackPane implements Animatable {
         initializeBars();
         menuBox();
         this.getChildren().add(menu);
+        this.getChildren().add( overlayPane);
+        overlayPane.setMouseTransparent(true);
         // Align the menu to the top right corner
         StackPane.setAlignment(menu, Pos.TOP_RIGHT);
         // set the size to preferred size otherwise stack pane will stretch it
@@ -341,8 +344,80 @@ public class VisualizationView extends StackPane implements Animatable {
 
     public void onMergeComparison(MergeComparisonEvent event, AnimationCallback onFinish) {
         // Currently not implemented
-        Timeline tl = new Timeline() ;
-        tl.setOnFinished(e -> onFinish.run());
+        Timeline tl = new Timeline();
+        // Phase 1 show the new bars that one of which will be set
+        int val1 = event.val1();
+        int val2 = event.val2();
+        int index1 = event.index1() ;
+        int index2 = event.index2() ;
+        // Create the two bars
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        double height = bounds.getHeight();
+        double width = bounds.getWidth();
+        double initialHeight = 50 ;
+        gap = Math.min(200.0 / normalizedNums.length, 4);
+        double barWidth = (width / normalizedNums.length) - gap;
+        double heightFactor = height - 2 * padding;
+        double barHeight1 = (double) val1/arrayMax * heightFactor;
+
+        Rectangle bar1 = new Rectangle();
+        bar1.setX( index1* (barWidth + gap) + gap / 2.0);
+        bar1.setWidth(barWidth);
+        bar1.setY(height - initialHeight);
+        bar1.setHeight(initialHeight);
+        bar1.setArcWidth(12);
+        bar1.setArcHeight(12);
+        bar1.setFill(Color.CORNFLOWERBLUE);
+        bar1.setOpacity(0.8);
+
+        Rectangle bar2 = new Rectangle();
+        double barHeight2 = (double) val2/arrayMax * heightFactor;
+        bar2.setX( index2* (barWidth + gap) + gap / 2.0);
+        bar2.setWidth(barWidth);
+        bar2.setY(height - initialHeight);
+        bar2.setHeight(initialHeight);
+        bar2.setArcWidth(12);
+        bar2.setArcHeight(12);
+        bar2.setFill(Color.CORNFLOWERBLUE);
+        bar2.setOpacity(0.8);
+
+        KeyValue kvyb1 = new KeyValue(bar1.yProperty(), height-initialHeight) ;
+        KeyValue kvyb2 = new KeyValue(bar2.yProperty(), height-initialHeight) ;
+        KeyValue kvyb3 = new KeyValue(bar1.yProperty(), height-barHeight1) ;
+        KeyValue kvyb4 = new KeyValue(bar2.yProperty(), height-barHeight2) ;
+        KeyValue kvhb1 = new KeyValue(bar1.heightProperty(), initialHeight) ;
+        KeyValue kvhb2 = new KeyValue(bar2.heightProperty(), initialHeight) ;
+        KeyValue kvhb3 = new KeyValue(bar1.heightProperty(), barHeight1) ;
+        KeyValue kvhb4 = new KeyValue(bar2.heightProperty(), barHeight2) ;
+
+        KeyFrame frame1 = new KeyFrame(Duration.ZERO , kvhb1,kvhb2,kvyb1,kvyb2) ;
+        KeyFrame frame2 = new KeyFrame(Duration.millis(animationDuration*2) , kvhb3,kvhb4,kvyb3,kvyb4) ;
+
+        tl.getKeyFrames().addAll(frame2,frame1) ;
+        // Phase 2 compare the two bars
+
+        Timeline tl1 = new Timeline();
+        KeyValue kv1 = new KeyValue(bar1.fillProperty(), comparisonColor);
+        KeyValue kv2 = new KeyValue(bar2.fillProperty(), comparisonColor);
+        tl1.getKeyFrames().addAll(
+                new KeyFrame(Duration.millis(animationDuration*2), kv1),
+                new KeyFrame(Duration.millis(animationDuration*2), kv2)
+        );
+
+        tl1.setOnFinished(e -> {
+            overlayPane.getChildren().clear();
+            onFinish.run() ;
+        });
+
+        overlayPane.getChildren().addAll(bar1,bar2) ;
+
+        currentAnimation = tl ;
+        tl.setOnFinished(e -> {
+            PauseTransition pause = new PauseTransition(Duration.millis(animationDuration*2)) ;
+            pause.play();
+            currentAnimation = tl1 ;
+            tl1.play();
+        });
         tl.play();
     }
 
