@@ -36,11 +36,12 @@ public class VisualizationView extends StackPane implements Animatable {
     private static final Color BAR_COLOR = Color.web("#38bdf8");// soft cyan
     private static final Color comparisonColor = Color.RED;
     private static final Color swapColor = Color.YELLOW;
-    private double animationDuration = 250;
+    private double animationDuration = 256;
     private int arrayMax;
     private Timeline currentAnimation;
     private VBox menu;
-    private Pane overlayPane = new Pane( ) ;
+    private Pane overlayPane = new Pane() ;
+    private String algorithm ;
 
 
     public double[] getNormalizedNums() {
@@ -114,7 +115,7 @@ public class VisualizationView extends StackPane implements Animatable {
     public void resetView() {
         if (bars != null) {
             this.getChildren().clear();
-            animationDuration = 200;
+            animationDuration = 256;
         }
 
     }
@@ -123,7 +124,7 @@ public class VisualizationView extends StackPane implements Animatable {
     private void menuBox() {
         menu = new VBox(10);
         Label algorithmName = new Label();
-        algorithmName.setText("Coming soon");
+        algorithmName.setText(algorithm);
         Label controls = new Label("⚙ Controls");
         HBox buttons = new HBox(12);
         Button speedUp = new Button();
@@ -195,13 +196,13 @@ public class VisualizationView extends StackPane implements Animatable {
         speedUp.setOnAction(e -> {
             if (animationDuration > 5) {
                 animationDuration /= 2;
-                speedLabel.setText("Speed: " + (250.0 / animationDuration) + "x");
+                speedLabel.setText("Speed: " + (256.0 / animationDuration) + "x");
             }
         });
         speedDown.setOnAction(e -> {
             if (animationDuration < 2000) {
                 animationDuration*=2 ;
-                speedLabel.setText("Speed: 0." + (250.0/ animationDuration * 10) + "x");
+                speedLabel.setText("Speed: " + (256.0/ animationDuration ) + "x");
             }
         });
 
@@ -419,6 +420,9 @@ public class VisualizationView extends StackPane implements Animatable {
             tl1.play();
         });
         tl.play();
+        // Phase 3 for-future update
+        // Show the smaller bar as a green bar
+        // also color the index that will be set differently for a better visualization
     }
 
 
@@ -426,7 +430,7 @@ public class VisualizationView extends StackPane implements Animatable {
         int left = event.left();
         int right = event.right();
         Timeline tl = new Timeline();
-        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD)));
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GREEN)));
         int timeShift = 0;
         for (int i = left; i < event.index(); i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
@@ -526,5 +530,13 @@ public class VisualizationView extends StackPane implements Animatable {
     @Override
     public void stop() {
         currentAnimation.stop();
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 }

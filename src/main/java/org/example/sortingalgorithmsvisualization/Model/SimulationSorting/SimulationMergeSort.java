@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 import java.util.Arrays;
 
@@ -54,6 +54,11 @@ public class SimulationMergeSort extends AbstractSimulationSorting{
             j++ ;
         }
         mergeNotification(left, right);
+    }
+
+    @Override
+    public String getName() {
+        return "Merge Sort";
     }
 
 }

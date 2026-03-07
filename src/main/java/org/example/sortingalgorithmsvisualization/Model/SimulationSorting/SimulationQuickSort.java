@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 import java.util.Random;
 
@@ -47,5 +47,10 @@ public class SimulationQuickSort extends AbstractSimulationSorting{
         array[right] = temp;
         swapNotification(index+1, right);
         return index + 1;
+    }
+
+    @Override
+    public String getName() {
+        return "Quick Sort";
     }
 }

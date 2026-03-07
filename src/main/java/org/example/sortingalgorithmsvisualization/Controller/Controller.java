@@ -1,8 +1,7 @@
 package org.example.sortingalgorithmsvisualization.Controller;
 
 import org.example.sortingalgorithmsvisualization.Model.ComparisonManager;
-import org.example.sortingalgorithmsvisualization.Model.PureSorting.InsertionSort;
-import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer.*;
+import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.*;
 import org.example.sortingalgorithmsvisualization.Model.VisualizationManager;
 import org.example.sortingalgorithmsvisualization.View.MainGUI;
 

@@ -182,12 +182,13 @@ public class InputScene extends StackPane implements Animatable {
             if (!newVal.matches("[0-9]*")) {
                 arrayMaxValue.setText(newVal.replaceAll("[^0-9]", ""));
             }
-            try {
-                Integer.parseInt(newVal);
-            } catch (NumberFormatException e) {
-                // Prevent the max from exceeding the int max value
-                arrayMaxValue.setText(String.valueOf(Integer.MAX_VALUE));
-            }
+            if (!arrayMaxValue.getText().isEmpty())
+                try {
+                    Integer.parseInt(arrayMaxValue.getText());
+                } catch (NumberFormatException e) {
+                    // Prevent the max from exceeding the int max value
+                    arrayMaxValue.setText(String.valueOf(Integer.MAX_VALUE));
+                }
         });
 
         BooleanBinding anySelected = randomArray.selectedProperty()

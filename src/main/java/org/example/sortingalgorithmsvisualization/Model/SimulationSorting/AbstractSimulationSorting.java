@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 import org.example.sortingalgorithmsvisualization.Model.Observers.Observable;
 import org.example.sortingalgorithmsvisualization.Model.Observers.Observer;
@@ -61,4 +61,6 @@ abstract public class AbstractSimulationSorting implements Observable, SortingSt
     public void mergeComparisonNotification(int val1, int val2, int index1, int index2, int setIndex) {
         for (Observer observer : observers) observer.mergeComparison(val1, val2, index1, index2, setIndex);
     }
+
+    public abstract String getName() ;
 }

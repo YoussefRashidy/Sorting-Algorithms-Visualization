@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 public class SimulationSelectionSort extends AbstractSimulationSorting{
     @Override
@@ -16,5 +16,10 @@ public class SimulationSelectionSort extends AbstractSimulationSorting{
         }
         sortNotification();
         return array;
+    }
+
+    @Override
+    public String getName() {
+        return "Selection Sort";
     }
 }

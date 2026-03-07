@@ -1,9 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
-
-import org.example.sortingalgorithmsvisualization.Model.PureSorting.SortingStrategy;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 public class SimulationBubbleSort extends AbstractSimulationSorting {
     @Override
@@ -27,5 +22,10 @@ public class SimulationBubbleSort extends AbstractSimulationSorting {
         }
         sortNotification();
         return array;
+    }
+
+    @Override
+    public String getName() {
+        return "Bubble Sort";
     }
 }

@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 public class SimulationHeapSort extends AbstractSimulationSorting {
     public int[] sort(int[] array) {
@@ -50,5 +50,10 @@ public class SimulationHeapSort extends AbstractSimulationSorting {
         for (int i = index; i >= 0; i--) {
             maxHeapify(i, array);
         }
+    }
+
+    @Override
+    public String getName() {
+        return "Heap Sort";
     }
 }

@@ -2,17 +2,13 @@ package org.example.sortingalgorithmsvisualization.Model;
 
 import org.example.sortingalgorithmsvisualization.Controller.Adaptor.ArrayAdaptor;
 import org.example.sortingalgorithmsvisualization.Controller.Adaptor.ComparisonArrayAdaptor;
-import org.example.sortingalgorithmsvisualization.Controller.ArrayFileReader;
-import org.example.sortingalgorithmsvisualization.Controller.ArrayGenerator;
 import org.example.sortingalgorithmsvisualization.Controller.ComparisonArray;
 import org.example.sortingalgorithmsvisualization.Controller.InputData;
 import org.example.sortingalgorithmsvisualization.Model.Observers.OperationsCounter;
 import org.example.sortingalgorithmsvisualization.Model.PureSorting.SortingStrategy;
-import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer.AbstractSimulationSorting;
+import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.AbstractSimulationSorting;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 

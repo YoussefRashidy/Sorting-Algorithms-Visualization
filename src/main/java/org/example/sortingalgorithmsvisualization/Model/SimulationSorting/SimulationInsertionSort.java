@@ -1,4 +1,4 @@
-package org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer;
+package org.example.sortingalgorithmsvisualization.Model.SimulationSorting;
 
 public class SimulationInsertionSort extends AbstractSimulationSorting{
     @Override
@@ -22,5 +22,9 @@ public class SimulationInsertionSort extends AbstractSimulationSorting{
         }
         sortNotification();
         return array;
+    }
+    @Override
+    public String getName() {
+        return "Insertion Sort";
     }
 }

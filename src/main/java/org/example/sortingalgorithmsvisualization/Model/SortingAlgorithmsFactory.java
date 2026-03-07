@@ -1,7 +1,7 @@
 package org.example.sortingalgorithmsvisualization.Model;
 
 import org.example.sortingalgorithmsvisualization.Model.PureSorting.*;
-import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer.*;
+import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.*;
 
 public class SortingAlgorithmsFactory {
     public SortingStrategy createPureAlgorithm(String algo) {

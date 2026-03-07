@@ -3,7 +3,7 @@ package org.example.sortingalgorithmsvisualization.Model;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import org.example.sortingalgorithmsvisualization.Model.Events.*;
-import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.Observer.AbstractSimulationSorting;
+import org.example.sortingalgorithmsvisualization.Model.SimulationSorting.AbstractSimulationSorting;
 import org.example.sortingalgorithmsvisualization.Model.Observers.EventRecorder;
 import org.example.sortingalgorithmsvisualization.Model.Observers.OperationsCounter;
 import org.example.sortingalgorithmsvisualization.View.VisualizationView;
@@ -53,6 +53,7 @@ public class VisualizationManager {
         currentEventIndex = 0 ;
         visualizationView.setNormalizedNums(nums);
 //        visualizationView.setManager(this);
+        visualizationView.setAlgorithm(sort.getName());
         visualizationView.initializeView();
 
         // a small delay such that the view fully loads before starting animation
@@ -83,7 +84,7 @@ public class VisualizationManager {
         }
         else {
             //TODO instruct the view to pop up windows showing num of comparisons
-            visualizationView.finishPopUp("Coming soon", counter.getComparison(), counter.getSwap(),this.onSessionFinish);
+            visualizationView.finishPopUp(sort.getName(), counter.getComparison(), counter.getSwap(),this.onSessionFinish);
         }
     }
 
