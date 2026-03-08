@@ -14,6 +14,8 @@ A JavaFX desktop application that provides an interactive, animated visualizatio
 - [Building & Running](#building--running)
 - [Usage](#usage)
 - [Exporting Results](#exporting-results)
+- [Data Analysis](#data-analysis)
+- [Report](#report)
 
 ---
 
@@ -44,7 +46,16 @@ A JavaFX desktop application that provides an interactive, animated visualizatio
 ## Project Structure
 
 ```
-src/main/java/org/example/sortingalgorithmsvisualization/
+Sorting Algorithms Visualization/
+│
+├── docs/
+│   └── report.pdf                  # Project report
+│
+├── analysis/
+│   ├── sample_data.csv             # Sample benchmark CSV used in analysis
+│   └── DataAnalysis.ipynb          # Jupyter notebook – statistical analysis & plots
+│
+└── src/main/java/org/example/sortingalgorithmsvisualization/
 │
 ├── HelloApplication.java           # JavaFX entry point
 │
@@ -192,3 +203,37 @@ In **Comparison Mode**, once the table has loaded:
 | Maximum Time | Slowest run (nanoseconds) |
 | Number of Comparisons | Total element comparisons |
 | Number of Interchanges | Total element swaps / assignments |
+
+---
+
+## Data Analysis
+
+The `analysis/` directory contains a self-contained analysis of the benchmark results:
+
+| File | Description |
+|---|---|
+| `analysis/sample_data.csv` | Sample CSV exported from the application's Comparison Mode |
+| `analysis/DataAnalysis.ipynb` | Jupyter notebook that loads the CSV, produces descriptive statistics, and plots performance comparisons across algorithms and array types |
+
+### Running the notebook
+
+```bash
+# Install dependencies (first time only)
+pip install pandas matplotlib notebook
+
+# Launch Jupyter
+jupyter notebook analysis/DataAnalysis.ipynb
+```
+
+The notebook expects `sample_data.csv` to be present in the same `analysis/` folder.
+
+---
+
+## Report
+
+A full written report covering the design decisions, algorithm analysis, and benchmarking methodology is available in:
+
+```
+docs/report.pdf
+```
+
