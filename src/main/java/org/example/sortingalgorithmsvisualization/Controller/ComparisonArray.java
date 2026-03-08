@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public record ComparisonArray(int[] array, String generationMode, int id) {
 
     // this id is required to identify different arrays
-    // Also not Linked Hash table end up being useless
+    // Also note Linked Hash table end up being useless
     // so in future update replace it with a list of entries
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
