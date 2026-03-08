@@ -75,7 +75,7 @@ public class ArrayGenerator {
                 case NEARLY_SORTED -> nearlySortedArray(size) ;
                 default -> throw new RuntimeException("Unknown Array type") ;
             } ;
-            arrays.set(i, arr) ;
+            arrays.add(arr) ;
         }
         return arrays ;
     }
