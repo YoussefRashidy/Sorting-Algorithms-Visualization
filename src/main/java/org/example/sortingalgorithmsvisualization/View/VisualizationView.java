@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.example.sortingalgorithmsvisualization.Model.AnimationCallback;
 import org.example.sortingalgorithmsvisualization.Model.Events.*;
@@ -33,14 +34,20 @@ public class VisualizationView extends StackPane implements Animatable {
     private Rectangle[] bars;
     private double gap = 4;
     private int padding = 20;
-    private static final Color BAR_COLOR = Color.web("#38bdf8");// soft cyan
-    private static final Color comparisonColor = Color.RED;
-    private static final Color swapColor = Color.YELLOW;
+    private static final Color BAR_COLOR = Color.web("#38bdf8");
+    private static final Color COMPARISON_COLOR = Color.web("#ef4444");
+    private static final Color SWAP_COLOR = Color.web("#facc15");
+    private static final Color SET_COLOR = Color.web("#84cc16");
+    private static final Color RANGE_COLOR = Color.web("#9B59B6");
+    private static final Color DIVIDE_COLOR = Color.web("#22c55e");
+    private static final Color SORTED_COLOR = Color.web("#22c55e");
     private double animationDuration = 256;
     private int arrayMax;
     private Timeline currentAnimation;
     private VBox menu;
-    private Pane overlayPane = new Pane() ;
+    private Pane overlayPane = new Pane();
+    private Label statusLabel;
+    private VBox legendBox;
     private String algorithm ;
 
 
@@ -59,11 +66,18 @@ public class VisualizationView extends StackPane implements Animatable {
     public void initializeView() {
         initializeBars();
         menuBox();
+        initializeStatusAndLegend();
         this.getChildren().add(menu);
-        this.getChildren().add( overlayPane);
+        this.getChildren().add(overlayPane);
+        this.getChildren().add(legendBox);
+        this.getChildren().add(statusLabel);
         overlayPane.setMouseTransparent(true);
         // Align the menu to the top right corner
         StackPane.setAlignment(menu, Pos.TOP_RIGHT);
+        StackPane.setAlignment(legendBox, Pos.TOP_LEFT);
+        StackPane.setMargin(legendBox, new Insets(10, 10, 10, 10));
+        StackPane.setAlignment(statusLabel, Pos.TOP_CENTER);
+        StackPane.setMargin(statusLabel, new Insets(10, 10, 10, 10));
         // set the size to preferred size otherwise stack pane will stretch it
         menu.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         StackPane.setMargin(menu, new Insets(15, 15, 0, 0));
@@ -196,17 +210,20 @@ public class VisualizationView extends StackPane implements Animatable {
         speedUp.setOnAction(e -> {
             if (animationDuration > 5) {
                 animationDuration /= 2;
-                speedLabel.setText("Speed: " + (256.0 / animationDuration) + "x");
+                speedLabel.setText("Speed: " + formatSpeedMultiplier() + "x");
             }
         });
         speedDown.setOnAction(e -> {
             if (animationDuration < 2000) {
-                animationDuration*=2 ;
-                speedLabel.setText("Speed: " + (256.0/ animationDuration ) + "x");
+                animationDuration *= 2;
+                speedLabel.setText("Speed: " + formatSpeedMultiplier() + "x");
             }
         });
 
         pauseStart.setOnAction(e -> {
+            if (currentAnimation == null) {
+                return;
+            }
             if (currentAnimation.getStatus() == Animation.Status.RUNNING) {
                 pause();
                 pauseStart.setText("▶");
@@ -217,35 +234,94 @@ public class VisualizationView extends StackPane implements Animatable {
         });
     }
 
+    private void initializeStatusAndLegend() {
+        statusLabel = new Label("Ready to visualize");
+        statusLabel.setStyle("""
+                -fx-font-family: 'Consolas';
+                -fx-font-size: 13px;
+                -fx-text-fill: #e2e8f0;
+                -fx-background-color: rgba(15,23,42,0.85);
+                -fx-background-radius: 8px;
+                -fx-padding: 6 10 6 10;
+                """);
+
+        legendBox = new VBox(6,
+                legendItem(BAR_COLOR, "Default"),
+                legendItem(COMPARISON_COLOR, "Compare"),
+                legendItem(SWAP_COLOR, "Swap"),
+                legendItem(DIVIDE_COLOR, "Divide/Partition"),
+                legendItem(SORTED_COLOR, "Sorted"),
+                legendItem(RANGE_COLOR, "Merge")
+        );
+        legendBox.setStyle("""
+                -fx-background-color: rgba(15,23,42,0.85);
+                -fx-background-radius: 10px;
+                -fx-padding: 8 10 8 10;
+                """);
+        legendBox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        legendBox.setMouseTransparent(true);
+    }
+
+    private HBox legendItem(Color color, String text) {
+        Region swatch = new Region();
+        swatch.setPrefSize(12, 12);
+        swatch.setBackground(new Background(
+                new BackgroundFill(color, new CornerRadii(6), Insets.EMPTY)
+        ));
+        Label label = new Label(text);
+        label.setStyle("-fx-text-fill: #cbd5e1; -fx-font-size: 12px;");
+        HBox row = new HBox(8, swatch, label);
+        row.setAlignment(Pos.CENTER_LEFT);
+        return row;
+    }
+
+    private String formatSpeedMultiplier() {
+        double multiplier = 256.0 / animationDuration;
+        if (Math.abs(multiplier - Math.rint(multiplier)) < 1e-9) {
+            return String.valueOf((int) Math.rint(multiplier));
+        }
+        return String.format("%.2f", multiplier);
+    }
+
+    private void setStatus(String text) {
+        if (statusLabel != null) {
+            statusLabel.setText(text);
+        }
+    }
+
 
     public void onComparison(ComparisonEvent event, AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
+        setStatus("Comparing index " + index1 + " and " + index2);
 
-        Timeline tl1 = new Timeline();
-        KeyValue kv1 = new KeyValue(bars[index1].fillProperty(), comparisonColor);
-        KeyValue kv2 = new KeyValue(bars[index2].fillProperty(), comparisonColor);
-        tl1.getKeyFrames().addAll(
+        Timeline tl = new Timeline();
+        KeyValue kv1 = new KeyValue(bars[index1].fillProperty(), COMPARISON_COLOR);
+        KeyValue kv2 = new KeyValue(bars[index2].fillProperty(), COMPARISON_COLOR);
+        tl.getKeyFrames().addAll(
                 new KeyFrame(Duration.millis(animationDuration), kv1),
                 new KeyFrame(Duration.millis(animationDuration), kv2)
         );
-        tl1.setOnFinished(e -> {
+
+        tl.setOnFinished(e -> {
             bars[index1].setFill(BAR_COLOR);
             bars[index2].setFill(BAR_COLOR);
             onFinish.run();
         });
-        currentAnimation = tl1;
 
-        tl1.play();
+        currentAnimation = tl;
+        tl.play();
     }
+
 
     public void onInterchange(SwapEvent event, AnimationCallback onFinish) {
         int index1 = event.index1();
         int index2 = event.index2();
+        setStatus("Swapping index " + index1 + " and " + index2);
 
         Timeline tl1 = new Timeline();
-        KeyValue kv1 = new KeyValue(bars[index1].fillProperty(), swapColor);
-        KeyValue kv2 = new KeyValue(bars[index2].fillProperty(), swapColor);
+        KeyValue kv1 = new KeyValue(bars[index1].fillProperty(), SWAP_COLOR);
+        KeyValue kv2 = new KeyValue(bars[index2].fillProperty(), SWAP_COLOR);
         KeyValue kvx1 = new KeyValue(bars[index1].xProperty(), bars[index2].getX(), Interpolator.EASE_BOTH);
         KeyValue kvx2 = new KeyValue(bars[index2].xProperty(), bars[index1].getX(), Interpolator.EASE_BOTH);
 
@@ -262,13 +338,13 @@ public class VisualizationView extends StackPane implements Animatable {
             onFinish.run();
         });
         currentAnimation = tl1;
-
         tl1.play();
     }
 
     public void onSet(SetEvent event, AnimationCallback onFinish) {
         int index = event.index();
         double val = event.val();
+        setStatus("Setting index " + index + " to value " + (int) val);
         double normalizedVal = val / arrayMax;
 
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
@@ -279,7 +355,7 @@ public class VisualizationView extends StackPane implements Animatable {
         Timeline tl = new Timeline();
         KeyValue kvh = new KeyValue(bars[index].heightProperty(), newBarHeight, Interpolator.EASE_BOTH);
         KeyValue kvy = new KeyValue(bars[index].yProperty(), height - newBarHeight, Interpolator.EASE_BOTH);
-        KeyValue kvColor = new KeyValue(bars[index].fillProperty(), Color.LIME);
+        KeyValue kvColor = new KeyValue(bars[index].fillProperty(), SET_COLOR);
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), kvh, kvy, kvColor));
         tl.setOnFinished(e -> {
             bars[index].setFill(BAR_COLOR);
@@ -290,20 +366,21 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     public void onDivide(DivideEvent event, AnimationCallback onFinish) {
+        setStatus("Dividing around index " + event.index());
         int left = event.index2();
         int right = event.index3();
         Timeline tl = new Timeline();
         int timeShift = 0;
         for (int i = left; i < event.index(); i++) {
-            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
-        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GOLD)));
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), DIVIDE_COLOR)));
         for (int i = event.index() + 1; i <= right; i++) {
-            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
@@ -317,13 +394,14 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     public void onMerge(MergeEvent event, AnimationCallback onFinish) {
+        setStatus("Merging range [" + event.index1() + ", " + event.index2() + "]");
         int index1 = event.index1();
         int index2 = event.index2();
         int timeShift = 0;
         Timeline tl = new Timeline();
         for (int i = index1; i <= index2; i++) {
-            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
 
@@ -344,6 +422,7 @@ public class VisualizationView extends StackPane implements Animatable {
     private static final Color MERGE_LOSER_COLOR  = Color.web("#f87171");
 
     public void onMergeComparison(MergeComparisonEvent event, AnimationCallback onFinish) {
+        setStatus("Merge compare values " + event.val1() + " and " + event.val2());
         // Currently not implemented
         Timeline tl = new Timeline();
         // Phase 1 show the new bars that one of which will be set
@@ -369,7 +448,7 @@ public class VisualizationView extends StackPane implements Animatable {
         bar1.setArcWidth(12);
         bar1.setArcHeight(12);
         bar1.setFill(MERGE_BAR_COLOR);
-        bar1.setOpacity(0.95);
+        bar1.setOpacity(0.75);
 
         Rectangle bar2 = new Rectangle();
         double barHeight2 = (double) val2/arrayMax * heightFactor;
@@ -380,7 +459,7 @@ public class VisualizationView extends StackPane implements Animatable {
         bar2.setArcWidth(12);
         bar2.setArcHeight(12);
         bar2.setFill(MERGE_BAR_COLOR);
-        bar2.setOpacity(0.95);
+        bar2.setOpacity(0.75);
 
         KeyValue kvyb1 = new KeyValue(bar1.yProperty(), height-initialHeight) ;
         KeyValue kvyb2 = new KeyValue(bar2.yProperty(), height-initialHeight) ;
@@ -398,8 +477,8 @@ public class VisualizationView extends StackPane implements Animatable {
         // Phase 2 compare the two bars
 
         Timeline tl1 = new Timeline();
-        KeyValue kv1 = new KeyValue(bar1.fillProperty(), comparisonColor);
-        KeyValue kv2 = new KeyValue(bar2.fillProperty(), comparisonColor);
+        KeyValue kv1 = new KeyValue(bar1.fillProperty(), COMPARISON_COLOR);
+        KeyValue kv2 = new KeyValue(bar2.fillProperty(), COMPARISON_COLOR);
         tl1.getKeyFrames().addAll(
                 new KeyFrame(Duration.millis(animationDuration*2), kv1),
                 new KeyFrame(Duration.millis(animationDuration*2), kv2)
@@ -427,20 +506,21 @@ public class VisualizationView extends StackPane implements Animatable {
 
 
     public void onPartition(PartitionEvent event, AnimationCallback onFinish) {
+        setStatus("Partition: pivot index " + event.index());
         int left = event.left();
         int right = event.right();
         Timeline tl = new Timeline();
-        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), Color.GREEN)));
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), DIVIDE_COLOR)));
         int timeShift = 0;
         for (int i = left; i < event.index(); i++) {
-            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
         for (int i = event.index() + 1; i <= right; i++) {
-            KeyValue kv = new KeyValue(bars[i].fillProperty(), Color.web("#9B59B6"));
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
@@ -454,11 +534,12 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     public void onSort(SortedEvent event, AnimationCallback onFinish) {
+        setStatus("Array sorted successfully");
         int timeShift = 0;
         Timeline tl = new Timeline();
         for (Rectangle bar : bars) {
-            KeyValue kv = new KeyValue(bar.fillProperty(), Color.GREEN);
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++);
+            KeyValue kv = new KeyValue(bar.fillProperty(), SORTED_COLOR);
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
@@ -500,36 +581,87 @@ public class VisualizationView extends StackPane implements Animatable {
         popup.setTitle("Visualization Statistics");
         popup.initOwner(this.getScene().getWindow());
         popup.initModality(Modality.APPLICATION_MODAL);
+        popup.initStyle(StageStyle.UNDECORATED);
+
         Label header = new Label("Visualization Completed");
-        Label Content = new Label("Algorithm Name : " + algoName + "\nComparison Count : " + ComparisonCount + "\nInterchange Count : " + interchangeCount);
+        header.setStyle("""
+                -fx-font-size: 20px;
+                -fx-font-weight: bold;
+                -fx-text-fill: #e2e8f0;
+                """);
+
+        Label content = new Label("Algorithm Name : " + algoName + "\nComparison Count : " + ComparisonCount + "\nInterchange Count : " + interchangeCount);
+        content.setStyle("""
+                -fx-font-size: 14px;
+                -fx-text-fill: #cbd5e1;
+                -fx-line-spacing: 4px;
+                """);
+
         Button closePopUp = new Button("Next");
-        closePopUp.setOnAction(e -> {
-            popup.close();
-        });
-        VBox layoutBox = new VBox(10, header, Content, closePopUp);
+        closePopUp.setDefaultButton(true);
+        String btnBase = """
+                -fx-font-size: 14px;
+                -fx-font-weight: bold;
+                -fx-background-color: #0ea5e9;
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 8 20 8 20;
+                -fx-cursor: hand;
+                """;
+        String btnHover = """
+                -fx-font-size: 14px;
+                -fx-font-weight: bold;
+                -fx-background-color: #0284c7;
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 8 20 8 20;
+                -fx-cursor: hand;
+                """;
+        closePopUp.setStyle(btnBase);
+        closePopUp.setOnMouseEntered(e -> closePopUp.setStyle(btnHover));
+        closePopUp.setOnMouseExited(e -> closePopUp.setStyle(btnBase));
+        closePopUp.setOnAction(e -> popup.close());
+
+        VBox layoutBox = new VBox(16, header, content, closePopUp);
         layoutBox.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layoutBox, 400, 200);
-        popup.setOnHidden(e -> {
-            onSessionFinish.onFinish();
-        });
+        layoutBox.setPadding(new Insets(24));
+        layoutBox.setStyle("""
+                -fx-background-color: linear-gradient(to bottom right, #0f172a, #1e293b);
+                -fx-background-radius: 14px;
+                -fx-border-color: #334155;
+                -fx-border-width: 1.2px;
+                -fx-border-radius: 14px;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 20, 0.2, 0, 6);
+                """);
+
+        Scene scene = new Scene(layoutBox, 460, 240);
+
+        popup.setOnHidden(e -> onSessionFinish.onFinish());
         popup.setScene(scene);
+        popup.centerOnScreen();
         popup.show();
 
     }
 
     @Override
     public void play() {
-        currentAnimation.play();
+        if (currentAnimation != null) {
+            currentAnimation.play();
+        }
     }
 
     @Override
     public void pause() {
-        currentAnimation.pause();
+        if (currentAnimation != null) {
+            currentAnimation.pause();
+        }
     }
 
     @Override
     public void stop() {
-        currentAnimation.stop();
+        if (currentAnimation != null) {
+            currentAnimation.stop();
+        }
     }
 
     public String getAlgorithm() {
