@@ -15,7 +15,6 @@ import java.util.List;
 public class ComparisonManager {
     private InputData data;
     private final SortingAlgorithmsFactory factory = new SortingAlgorithmsFactory();
-    private LinkedHashMap<ComparisonArray , List<ComparisonStat>> statTable = new LinkedHashMap<>() ;
     private final ComparisonArrayAdaptor adaptor = new ArrayAdaptor() ;
     public InputData getData() {
         return data;
@@ -26,6 +25,7 @@ public class ComparisonManager {
     }
 
     public LinkedHashMap<ComparisonArray , List<ComparisonStat>> runComparison() {
+        LinkedHashMap<ComparisonArray, List<ComparisonStat>> statTable = new LinkedHashMap<>();
         ArrayList<ComparisonArray> arrays = getArrays() ;
         for (ComparisonArray arr : arrays) {
             ArrayList<ComparisonStat> statList = new ArrayList<>() ;
@@ -36,7 +36,7 @@ public class ComparisonManager {
             }
             statTable.put(arr, statList) ;
         }
-        return statTable ;
+        return statTable;
     }
 
     private ArrayList<ComparisonArray> getArrays() {

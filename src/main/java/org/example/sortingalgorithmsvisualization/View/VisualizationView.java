@@ -41,7 +41,8 @@ public class VisualizationView extends StackPane implements Animatable {
     private static final Color RANGE_COLOR = Color.web("#9B59B6");
     private static final Color DIVIDE_COLOR = Color.web("#22c55e");
     private static final Color SORTED_COLOR = Color.web("#22c55e");
-    private double animationDuration = 256;
+    private double animationDuration = 512;
+    private double pauseDuration = 256 ;
     private int arrayMax;
     private Timeline currentAnimation;
     private VBox menu;
@@ -129,7 +130,7 @@ public class VisualizationView extends StackPane implements Animatable {
     public void resetView() {
         if (bars != null) {
             this.getChildren().clear();
-            animationDuration = 256;
+            animationDuration = 512;
         }
 
     }
@@ -276,7 +277,7 @@ public class VisualizationView extends StackPane implements Animatable {
     }
 
     private String formatSpeedMultiplier() {
-        double multiplier = 256.0 / animationDuration;
+        double multiplier = 512.0 / animationDuration;
         if (Math.abs(multiplier - Math.rint(multiplier)) < 1e-9) {
             return String.valueOf((int) Math.rint(multiplier));
         }
@@ -304,6 +305,8 @@ public class VisualizationView extends StackPane implements Animatable {
         );
 
         tl.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3*animationDuration)) ;
+            pauseTransition.play();
             bars[index1].setFill(BAR_COLOR);
             bars[index2].setFill(BAR_COLOR);
             onFinish.run();
@@ -330,6 +333,8 @@ public class VisualizationView extends StackPane implements Animatable {
                 new KeyFrame(Duration.millis(animationDuration), kv2, kvx2)
         );
         tl1.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3*animationDuration)) ;
+            pauseTransition.play();
             bars[index1].setFill(BAR_COLOR);
             bars[index2].setFill(BAR_COLOR);
             Rectangle temp = bars[index1];
@@ -358,6 +363,8 @@ public class VisualizationView extends StackPane implements Animatable {
         KeyValue kvColor = new KeyValue(bars[index].fillProperty(), SET_COLOR);
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), kvh, kvy, kvColor));
         tl.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3*animationDuration)) ;
+            pauseTransition.play();
             bars[index].setFill(BAR_COLOR);
             onFinish.run();
         });
@@ -373,18 +380,21 @@ public class VisualizationView extends StackPane implements Animatable {
         int timeShift = 0;
         for (int i = left; i < event.index(); i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.05*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
         tl.getKeyFrames().add(new KeyFrame(Duration.millis(animationDuration), new KeyValue(bars[event.index()].fillProperty(), DIVIDE_COLOR)));
+        timeShift = 0 ;
         for (int i = event.index() + 1; i <= right; i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.05*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
         tl.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3*animationDuration)) ;
+            pauseTransition.play();
             for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
             onFinish.run();
         });
@@ -408,6 +418,8 @@ public class VisualizationView extends StackPane implements Animatable {
         }
 
         tl.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3*animationDuration)) ;
+            pauseTransition.play();
             for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
             onFinish.run();
         });
@@ -448,7 +460,7 @@ public class VisualizationView extends StackPane implements Animatable {
         bar1.setArcWidth(12);
         bar1.setArcHeight(12);
         bar1.setFill(MERGE_BAR_COLOR);
-        bar1.setOpacity(0.75);
+        bar1.setOpacity(0.6);
 
         Rectangle bar2 = new Rectangle();
         double barHeight2 = (double) val2/arrayMax * heightFactor;
@@ -459,7 +471,7 @@ public class VisualizationView extends StackPane implements Animatable {
         bar2.setArcWidth(12);
         bar2.setArcHeight(12);
         bar2.setFill(MERGE_BAR_COLOR);
-        bar2.setOpacity(0.75);
+        bar2.setOpacity(0.5);
 
         KeyValue kvyb1 = new KeyValue(bar1.yProperty(), height-initialHeight) ;
         KeyValue kvyb2 = new KeyValue(bar2.yProperty(), height-initialHeight) ;
@@ -471,7 +483,7 @@ public class VisualizationView extends StackPane implements Animatable {
         KeyValue kvhb4 = new KeyValue(bar2.heightProperty(), barHeight2) ;
 
         KeyFrame frame1 = new KeyFrame(Duration.ZERO , kvhb1,kvhb2,kvyb1,kvyb2) ;
-        KeyFrame frame2 = new KeyFrame(Duration.millis(animationDuration*2) , kvhb3,kvhb4,kvyb3,kvyb4) ;
+        KeyFrame frame2 = new KeyFrame(Duration.millis(animationDuration*3) , kvhb3,kvhb4,kvyb3,kvyb4) ;
 
         tl.getKeyFrames().addAll(frame2,frame1) ;
         // Phase 2 compare the two bars
@@ -485,16 +497,15 @@ public class VisualizationView extends StackPane implements Animatable {
         );
 
         tl1.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3.5*animationDuration)) ;
             overlayPane.getChildren().clear();
-            onFinish.run() ;
+            onFinish.run();
         });
 
         overlayPane.getChildren().addAll(bar1,bar2) ;
 
         currentAnimation = tl ;
         tl.setOnFinished(e -> {
-            PauseTransition pause = new PauseTransition(Duration.millis(animationDuration*2)) ;
-            pause.play();
             currentAnimation = tl1 ;
             tl1.play();
         });
@@ -514,17 +525,20 @@ public class VisualizationView extends StackPane implements Animatable {
         int timeShift = 0;
         for (int i = left; i < event.index(); i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.05*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
+        timeShift = 0 ;
         for (int i = event.index() + 1; i <= right; i++) {
             KeyValue kv = new KeyValue(bars[i].fillProperty(), RANGE_COLOR);
-            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.15*animationDuration*timeShift;
+            double delay = animationDuration + animationDuration * Math.log1p(timeShift++)+0.05*animationDuration*timeShift;
             KeyFrame frame = new KeyFrame(Duration.millis(delay), kv);
             tl.getKeyFrames().add(frame);
         }
         tl.setOnFinished(e -> {
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(3.5*animationDuration)) ;
+            pauseTransition.play();
             for (Rectangle bar : bars) bar.setFill(BAR_COLOR);
             onFinish.run();
         });
@@ -545,7 +559,7 @@ public class VisualizationView extends StackPane implements Animatable {
         }
 
         tl.setOnFinished(e -> {
-            onFinish.run();
+            finishWithPause(onFinish);
         });
 
         currentAnimation = tl;
@@ -670,5 +684,11 @@ public class VisualizationView extends StackPane implements Animatable {
 
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    private void finishWithPause(AnimationCallback onFinish) {
+        PauseTransition pause = new PauseTransition(Duration.millis(animationDuration)) ;
+        pause.setOnFinished(e-> onFinish.run());
+        pause.play();
     }
 }
